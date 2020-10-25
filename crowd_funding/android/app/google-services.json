@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "532306594551",
+    "firebase_url": "https://krowdfunding-ce256.firebaseio.com",
+    "project_id": "krowdfunding-ce256",
+    "storage_bucket": "krowdfunding-ce256.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:532306594551:android:66689dbbfcfadf3395a1f2",
+        "android_client_info": {
+          "package_name": "com.example.crowd_funding"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "532306594551-1mdq3ikuqv5grm7g8qmjll02haegmvc5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxyEBcG-89fntiG9IybzYA513-klcVbZ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "532306594551-1mdq3ikuqv5grm7g8qmjll02haegmvc5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
