@@ -2,15 +2,18 @@
   class TextFField extends StatelessWidget{
   String lableTextField ;
    String hintTextField;
+   String errorText;
   IconButton suffixIcons;
     TextFField({
       this.lableTextField,
       this.hintTextField,
-      this.suffixIcons
+      this.suffixIcons,
+      this.errorText
     });
    
     Widget build(BuildContext context){
              return TextFormField(
+               textDirection: TextDirection.ltr,
                     decoration: InputDecoration(
                      labelText: lableTextField,
                       suffixIcon:this.suffixIcons,
@@ -31,18 +34,29 @@
                           borderSide: BorderSide(
                               color: Theme.of(context).focusColor,
                               style: BorderStyle.solid),
-                          borderRadius: BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(10)),
                       //border:  : OutlineInputBorder
                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
+                          borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide(
                               color: Theme.of(context).primaryColor, 
-                              style: BorderStyle.solid)),),
-                      
+                              style: BorderStyle.solid)),
+                       errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide:  BorderSide(
+                          color: Colors.red[600],
+                        ) 
+                        ),
+                        focusedErrorBorder:OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).focusColor,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(5)), 
+                    ), 
                        
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Please enter some text';
+                        return errorText;
                       }
                       return null;
                     },);
