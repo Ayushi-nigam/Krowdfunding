@@ -160,7 +160,7 @@ class Menu extends StatelessWidget {
 class ProfileLogoImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    AssetImage profilelogoAssetImage = AssetImage('assets/images/profile.png');
+    AssetImage profilelogoAssetImage = AssetImage('assets/Images/profile.png');
     Image profilelogoImage = Image(image: profilelogoAssetImage);
     return Container(
       child: profilelogoImage,
