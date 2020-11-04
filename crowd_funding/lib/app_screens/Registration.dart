@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crowd_funding/common/successTick.dart';
 import 'package:crowd_funding/model/User.dart';
 import 'package:flutter/material.dart';
 import 'TextFField.dart';
@@ -148,17 +149,16 @@ class _RegistrartionForm extends State<Registration> {
                             ),
                             onPressed: () {
                               if (registrationFormKey.currentState.validate()) {
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) => Dashboard(),
-                                //   ),
-                                // );
                                 this.setUserDetail();
                                 firebaseUsers
                                     .add(this.aUser.toJson())
                                     .then((value) {
-                                  print("done");
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => new SuccessTick(),
+                                    ),
+                                  );
                                 });
                               }
                             })),
