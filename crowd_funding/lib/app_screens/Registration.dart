@@ -52,10 +52,7 @@ class _RegistrartionForm extends State<Registration> {
                           lableTextField: "First Name",
                           hintTextField: "Enter The First Name",
                           errorText: "Please Enter First Name",
-                          suffixIcons: IconButton(
-                              icon: Icon(
-                            null,
-                          )),
+                          suffixIcons: null,
                           myController: this.firstName),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
@@ -67,10 +64,7 @@ class _RegistrartionForm extends State<Registration> {
                             lableTextField: "Last Name",
                             hintTextField: "Enter The Last Name",
                             errorText: "Please Enter Last Name",
-                            suffixIcons: IconButton(
-                                icon: Icon(
-                              null,
-                            )),
+                            suffixIcons: null,
                             myController: this.lastName)),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -81,10 +75,7 @@ class _RegistrartionForm extends State<Registration> {
                           lableTextField: "Email Id",
                           hintTextField: "Enter The Email Id",
                           errorText: "Please Enter Email Id",
-                          suffixIcons: IconButton(
-                              icon: Icon(
-                            null,
-                          )),
+                          suffixIcons: null,
                           myController: this.emailId),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
@@ -96,10 +87,7 @@ class _RegistrartionForm extends State<Registration> {
                             lableTextField: "Mobile Number",
                             hintTextField: "Enter Mobile Number",
                             errorText: "Please Enter Mobile Number",
-                            suffixIcons: IconButton(
-                                icon: Icon(
-                              null,
-                            )),
+                            suffixIcons: null,
                             myController: this.mobileNumber)),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -111,10 +99,12 @@ class _RegistrartionForm extends State<Registration> {
                             hintTextField: "Enter your password",
                             errorText: "Please Enter Password",
                             suffixIcons: IconButton(
-                                icon: new Icon(
-                              Icons.remove_red_eye,
-                              //color: this._showPassword ? Colors.blue : Colors.grey,
-                            )),
+                              icon: new Icon(
+                                Icons.remove_red_eye,
+                                //color: this._showPassword ? Colors.blue : Colors.grey,
+                              ),
+                              onPressed: null,
+                            ),
                             myController: this.password)),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -126,10 +116,12 @@ class _RegistrartionForm extends State<Registration> {
                             hintTextField: "Enter your Re-Password",
                             errorText: "Please Enter Re-Password",
                             suffixIcons: IconButton(
-                                icon: Icon(
-                              Icons.remove_red_eye,
-                              //color: this._showPassword ? Colors.blue : Colors.grey,
-                            )),
+                              icon: Icon(
+                                Icons.remove_red_eye,
+                                //color: this._showPassword ? Colors.blue : Colors.grey,
+                              ),
+                              onPressed: null,
+                            ),
                             myController: this.confirmPassword)),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
