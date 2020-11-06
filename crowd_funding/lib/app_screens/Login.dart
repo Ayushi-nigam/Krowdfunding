@@ -37,10 +37,7 @@ class _LoginForm extends State<Login> {
                           child: TextFField(
                             lableTextField: "Enter Email",
                             hintTextField: "Enter your email Id",
-                            suffixIcons: IconButton(
-                                icon: Icon(
-                              null,
-                            )),
+                            suffixIcons: null,
                             errorText: "Please Enter Email Id",
                           )),
                       SizedBox(height: 40.0),
@@ -51,10 +48,12 @@ class _LoginForm extends State<Login> {
                             lableTextField: "Enter Password",
                             hintTextField: "Enter your password",
                             suffixIcons: IconButton(
-                                icon: Icon(
-                              Icons.remove_red_eye,
-                              //color: this._showPassword ? Colors.blue : Colors.grey,
-                            )),
+                              icon: Icon(
+                                Icons.remove_red_eye,
+                                //color: this._showPassword ? Colors.blue : Colors.grey,
+                              ),
+                              onPressed: null,
+                            ),
                             errorText: "Please Enter Password",
                           )),
                       SizedBox(height: 30.0),
