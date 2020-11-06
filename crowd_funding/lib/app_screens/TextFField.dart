@@ -1,20 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TextFField extends StatelessWidget {
   String lableTextField;
   String hintTextField;
   String errorText;
+  RegExp validInput;
+  RegExp inValidInput;
   final myController;
-  IconButton suffixIcons;
+  TextInputType keyboardTypes;
+  int maxLenthOfTextField;
+  GestureDetector suffixIcons;
   TextFField(
       {this.lableTextField,
       this.hintTextField,
       this.suffixIcons,
       this.errorText,
-      this.myController});
+      this.myController,
+      this.keyboardTypes,
+      this.maxLenthOfTextField,
+      this.validInput,
+      this.inValidInput
+      });
 
   Widget build(BuildContext context) {
     return TextFormField(
+      keyboardType: keyboardTypes,
+      inputFormatters:<TextInputFormatter> [ 
+        LengthLimitingTextInputFormatter(maxLenthOfTextField),
+        if(validInput!=null)
+          FilteringTextInputFormatter.allow(validInput),
+        if(validInput!=null)  
+          FilteringTextInputFormatter.deny(inValidInput)
+        ],
       controller: myController,
       textDirection: TextDirection.ltr,
       decoration: InputDecoration(

@@ -13,54 +13,76 @@ class Login extends StatefulWidget {
 
 class _LoginForm extends State<Login> {
   final loginFormKey = GlobalKey<FormState>();
-
+  bool _showPassword=false;
   @override
   Widget build(BuildContext context) {
-    return Form(
-        key: loginFormKey,
-        child: new Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          body: new ListView(
-            children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  new Container(
-                    margin: EdgeInsets.symmetric(
-                        vertical: 0,
-                        horizontal: (MediaQuery.of(context).size.width - 350)),
-                    child: Column(children: [
-                      SizedBox(height: 40.0),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width - 30,
-                          height: 70,
+      return Scaffold(
+        appBar: new AppBar(
+          backgroundColor: Theme.of(context).appBarTheme.color,
+          iconTheme: Theme.of(context).iconTheme,
+          title: new Text(
+            "Login",
+            style: new TextStyle(color: Colors.white),
+          ),
+          ),
+           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: new Form(
+              key: loginFormKey,
+              child:  new Center(
+                child:Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                  children: [
+                    
+                    SizedBox(height: MediaQuery.of(context).size.height / 20),
+                   new Container(
+                    child:Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                      Container(
+                          width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width/8 ,
+                          height: MediaQuery.of(context).size.width / 10,
                           child: TextFField(
+                            keyboardTypes: TextInputType.emailAddress,
+                            maxLenthOfTextField: null,
+                            validInput: RegExp(r'[a-zA-Z]'),
+                          inValidInput: RegExp(r'[0-9]'),
                             lableTextField: "Enter Email",
                             hintTextField: "Enter your email Id",
-                            suffixIcons: IconButton(
-                                icon: Icon(
-                              null,
-                            )),
-                            errorText: "Please Enter Email Id",
+                            suffixIcons: GestureDetector(
+                                child:IconButton(icon: null,)
+                             ),
+                             errorText: "Please Enter Email Id",
                           )),
-                      SizedBox(height: 40.0),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width - 30,
-                          height: 50,
+                      SizedBox(height: MediaQuery.of(context).size.height / 40),
+                      Container(
+                          width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width/8 ,
+                          height: MediaQuery.of(context).size.width / 10,
                           child: TextFField(
+                            keyboardTypes: TextInputType.visiblePassword,
+                            maxLenthOfTextField: null,
                             lableTextField: "Enter Password",
                             hintTextField: "Enter your password",
-                            suffixIcons: IconButton(
-                                icon: Icon(
-                              Icons.remove_red_eye,
-                              //color: this._showPassword ? Colors.blue : Colors.grey,
-                            )),
+                             suffixIcons: GestureDetector(
+                                onTap:(){
+                                  setState(() {
+                                    _showPassword=!_showPassword;
+                                  });
+                                },
+                                child: IconButton(
+                               icon: Icon(
+                             Icons.remove_red_eye,
+                             color: this._showPassword ? Theme.of(context).iconTheme:Colors.grey,
+                             )),
+                             ),
+                            
                             errorText: "Please Enter Password",
                           )),
-                      SizedBox(height: 30.0),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width - 30,
-                          height: 50,
+                      SizedBox(height: MediaQuery.of(context).size.height / 40),
+                      Container(
+                          width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width/ 4 ,
+                          height: MediaQuery.of(context).size.width / 15,
                           child: RaisedButton(
                               color: Theme.of(context).buttonColor,
                               textColor: Color.fromRGBO(0, 0, 0, 1),
@@ -85,19 +107,20 @@ class _LoginForm extends State<Login> {
                                 }
                               })),
                     ]),
-                  ),
-                  new Column(children: [
-                    SizedBox(height: 30.0),
+                   ),
+                  new Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Text(
                       "OR",
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width - 30,
-                        height: 50,
+                    SizedBox(height: MediaQuery.of(context).size.height / 40),
+                    Container(
+                        width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width/ 4 ,
+                        height: MediaQuery.of(context).size.width / 15,
                         child: RaisedButton(
                             color: Colors.blue,
                             onPressed: () {},
@@ -125,10 +148,10 @@ class _LoginForm extends State<Login> {
                             ),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)))),
-                    SizedBox(height: 15),
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width - 30,
-                        height: 50,
+                    SizedBox(height: MediaQuery.of(context).size.height / 40),
+                    Container(
+                        width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width/ 4 ,
+                        height: MediaQuery.of(context).size.width / 15,
                         child: RaisedButton(
                             color: Colors.blue[800],
                             onPressed: () {},
@@ -143,7 +166,7 @@ class _LoginForm extends State<Login> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(left: 40),
+                                  padding: EdgeInsets.only(left: 20),
                                   child: Text(
                                     'Sign In with Facebook',
                                     textAlign: TextAlign.center,
@@ -156,12 +179,10 @@ class _LoginForm extends State<Login> {
                             ),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)))),
-                    SizedBox(
-                      height: 15.0,
-                    ),
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width - 150,
-                        height: 50,
+                    SizedBox(height: MediaQuery.of(context).size.height / 40),
+                    Container(
+                        width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width/ 4 ,
+                          height: MediaQuery.of(context).size.width / 15,
                         child: RaisedButton(
                             color: Theme.of(context).primaryColor,
                             textColor: Color.fromRGBO(0, 0, 0, 1),
@@ -182,10 +203,11 @@ class _LoginForm extends State<Login> {
                               );
                             })),
                   ]),
-                ],
-              )
-            ],
+                  ],)
+                
+              ),
           ),
-        ));
+          );
+  
   }
 }
