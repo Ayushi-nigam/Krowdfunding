@@ -19,6 +19,7 @@ class _RegistrartionForm extends State<Registration> {
   final emailId = TextEditingController();
   final password = TextEditingController();
   final confirmPassword = TextEditingController();
+  bool _showPassword=false;
   CollectionReference firebaseUsers =
       FirebaseFirestore.instance.collection('UserProfile');
 
@@ -49,10 +50,13 @@ class _RegistrartionForm extends State<Registration> {
                           MediaQuery.of(context).size.width / 8,
                       height: MediaQuery.of(context).size.height / 10,
                       child: TextFField(
+                          obscureTexts: false,
+                          keyboardTypes: TextInputType.name,
+                          maxLenthOfTextField: null,
+                          validInput: RegExp(r'[a-zA-Z]'),
                           lableTextField: "First Name",
                           hintTextField: "Enter The First Name",
                           errorText: "Please Enter First Name",
-                          suffixIcons: null,
                           myController: this.firstName),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
@@ -61,10 +65,13 @@ class _RegistrartionForm extends State<Registration> {
                             MediaQuery.of(context).size.width / 8,
                         height: MediaQuery.of(context).size.height / 10,
                         child: TextFField(
+                          obscureTexts: false,
+                          keyboardTypes: TextInputType.name,
+                          maxLenthOfTextField: null,
+                          validInput: RegExp(r'[a-zA-Z]'),
                             lableTextField: "Last Name",
                             hintTextField: "Enter The Last Name",
                             errorText: "Please Enter Last Name",
-                            suffixIcons: null,
                             myController: this.lastName)),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -72,10 +79,13 @@ class _RegistrartionForm extends State<Registration> {
                           MediaQuery.of(context).size.width / 8,
                       height: MediaQuery.of(context).size.height / 10,
                       child: TextFField(
+                          obscureTexts: false,
+                          keyboardTypes: TextInputType.emailAddress,
+                          maxLenthOfTextField: null,
+                          validInput: RegExp(r'[a-zA-Z@.]'),
                           lableTextField: "Email Id",
                           hintTextField: "Enter The Email Id",
                           errorText: "Please Enter Email Id",
-                          suffixIcons: null,
                           myController: this.emailId),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
@@ -84,10 +94,13 @@ class _RegistrartionForm extends State<Registration> {
                             MediaQuery.of(context).size.width / 8,
                         height: MediaQuery.of(context).size.height / 10,
                         child: TextFField(
+                          obscureTexts: false,
+                          keyboardTypes: TextInputType.number,
+                          maxLenthOfTextField: 10,
+                          validInput: RegExp(r'[0-9]'),
                             lableTextField: "Mobile Number",
                             hintTextField: "Enter Mobile Number",
                             errorText: "Please Enter Mobile Number",
-                            suffixIcons: null,
                             myController: this.mobileNumber)),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -95,16 +108,24 @@ class _RegistrartionForm extends State<Registration> {
                             MediaQuery.of(context).size.width / 8,
                         height: MediaQuery.of(context).size.height / 10,
                         child: TextFField(
+                            obscureTexts: !_showPassword,
+                            keyboardTypes: TextInputType.visiblePassword,
+                            maxLenthOfTextField: null,
+                            validInput: RegExp(r'[a-zA-Z0-9@#$%&*^]'),
                             lableTextField: "Enter Password",
                             hintTextField: "Enter your password",
                             errorText: "Please Enter Password",
                             suffixIcons: IconButton(
-                              icon: new Icon(
-                                Icons.remove_red_eye,
-                                //color: this._showPassword ? Colors.blue : Colors.grey,
-                              ),
-                              onPressed: null,
-                            ),
+                               icon: Icon(
+                             Icons.remove_red_eye,
+                             color: this._showPassword ? Colors.grey : Theme.of(context).iconTheme.color,
+                             ),
+                              onPressed: (){
+                               setState(() {
+                                    _showPassword=!_showPassword;
+                                  });
+                             },
+                             ),
                             myController: this.password)),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -112,16 +133,24 @@ class _RegistrartionForm extends State<Registration> {
                             MediaQuery.of(context).size.width / 8,
                         height: MediaQuery.of(context).size.height / 10,
                         child: TextFField(
+                            obscureTexts:!_showPassword,
+                            keyboardTypes: TextInputType.visiblePassword,
+                            maxLenthOfTextField: null,
+                            validInput: RegExp(r'[a-zA-Z0-9@#$%&*^]'),
                             lableTextField: "Enter Re-Password",
                             hintTextField: "Enter your Re-Password",
                             errorText: "Please Enter Re-Password",
                             suffixIcons: IconButton(
-                              icon: Icon(
-                                Icons.remove_red_eye,
-                                //color: this._showPassword ? Colors.blue : Colors.grey,
-                              ),
-                              onPressed: null,
-                            ),
+                               icon: Icon(
+                             Icons.remove_red_eye,
+                              color: this._showPassword ? Colors.grey : Theme.of(context).iconTheme.color,
+                             ),
+                             onPressed: (){
+                               setState(() {
+                                    _showPassword=!_showPassword;
+                                  });
+                             },
+                             ),
                             myController: this.confirmPassword)),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -178,3 +207,4 @@ class _RegistrartionForm extends State<Registration> {
     super.dispose();
   }
 }
+
