@@ -9,6 +9,7 @@ class TextFField extends StatelessWidget {
   bool obscureTexts; 
   Pattern validInput;
   IconButton suffixIcons;
+  IconButton asuffixIcons;
   TextInputType keyboardTypes;
   int maxLenthOfTextField;
   TextFField(
