@@ -4,6 +4,8 @@ import 'dart:async';
 import 'package:crowd_funding/app_screens/Login.dart';
 import 'package:flutter/material.dart';
 
+import 'EditProfile.dart';
+
 class Logo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class Logo extends StatelessWidget {
     Navigator.of(context).pushReplacement(new PageRouteBuilder(
         maintainState: true,
         opaque: true,
-        pageBuilder: (context, _, __) => new Login(),
+        pageBuilder: (context, _, __) => new EditProfile(),
         transitionDuration: const Duration(seconds: 1),
         transitionsBuilder: (context, anim1, anim2, child) {
           return new FadeTransition(

@@ -6,15 +6,24 @@ class TextFField extends StatelessWidget {
   String errorText;
   final myController;
   IconButton suffixIcons;
+  TextInputType aTextInputType;
+  int maxLine;
+  int minLine;
   TextFField(
       {this.lableTextField,
       this.hintTextField,
       this.suffixIcons,
       this.errorText,
-      this.myController});
+      this.myController,
+      this.aTextInputType,
+      this.maxLine,
+      this.minLine});
 
   Widget build(BuildContext context) {
     return TextFormField(
+      keyboardType: this.aTextInputType,
+      maxLines: this.maxLine,
+      maxLength: this.minLine,
       controller: myController,
       textDirection: TextDirection.ltr,
       decoration: InputDecoration(
