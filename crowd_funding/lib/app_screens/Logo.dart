@@ -4,6 +4,8 @@ import 'dart:async';
 import 'package:crowd_funding/app_screens/Login.dart';
 import 'package:flutter/material.dart';
 
+import 'EditProfile.dart';
+
 class Logo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

@@ -39,16 +39,28 @@ class _LoginForm extends State<Login> {
                   children: [
                     Container(
                         width: MediaQuery.of(context).size.width -
-                            MediaQuery.of(context).size.width / 8,
+                              MediaQuery.of(context).size.width / 8,
                         height: MediaQuery.of(context).size.height / 10,
                         child: TextFField(
                           obscureTexts: false,
-                          keyboardTypes: TextInputType.emailAddress,
+                          aTextInputType: TextInputType.emailAddress,
                           maxLenthOfTextField: null,
-                          validInput: RegExp(r'[a-zA-Z@.]'),
+                          validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter Email Id";
+                                }
+                            Pattern pattern=r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                              RegExp regex = new RegExp(pattern);
+                              if (!regex.hasMatch(value))
+                                {
+                                  return "Enter Valid Email";
+                                  }
+                             
+                                return null;
+                          },
                           lableTextField: "Enter Email",
                           hintTextField: "Enter your email Id",
-                          errorText: "Please Enter Email Id",
+                          //errorText: "Please Enter Email Id",
                         )),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -57,27 +69,35 @@ class _LoginForm extends State<Login> {
                         height: MediaQuery.of(context).size.height / 10,
                         child: TextFField(
                           obscureTexts: !_showPassword,
-                          keyboardTypes: TextInputType.visiblePassword,
-                          maxLenthOfTextField: null,
-                          validInput: RegExp(r'[a-zA-Z0-9@#$%&*^]'),
+                          aTextInputType: TextInputType.visiblePassword,
+                          maxLine: 1,
+                          maxLenthOfTextField: 15,
+                         // validInput: RegExp(r'[a-zA-Z0-9@#$%&*^]'),
                           lableTextField: "Enter Password",
                           hintTextField: "Enter your password",
-                          suffixIcons: IconButton(
-                                icon: Icon(
-                              Icons.remove_red_eye,
-                             color: this._showPassword
-                                  ? Colors.grey:
-                                  Theme.of(context).iconTheme.color,
-                            ),
-                             onPressed: (){
+                         suffixIcons: IconButton(
+                               icon: Icon(
+                             _showPassword? Icons.visibility: Icons.visibility_off,
+                             color: this._showPassword ? Colors.grey : Theme.of(context).iconTheme.color,
+                             ),
+                              onPressed: (){
                                setState(() {
                                     _showPassword=!_showPassword;
                                   });
                              },
-                            ),
-                          
-                          errorText: "Please Enter Password",
-                        )),
+                             ),
+                          validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter Password";
+                                }
+                                 Pattern pattern =
+                            r'^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{6,}$';
+                           RegExp regex = new RegExp(pattern);
+                            if (!regex.hasMatch(value)){
+                              return 'Invalid password';
+                            }
+                            return null;
+                          })),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
                         width: MediaQuery.of(context).size.width -
