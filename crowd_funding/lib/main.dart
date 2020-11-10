@@ -32,7 +32,7 @@ class CrowdfundApp extends StatelessWidget {
           buttonColor: Color(0xffEA8724),
           scaffoldBackgroundColor: Color(0xff607D8B)),
       title: "Crowd Funding",
-      home: new MyFundraise(),
+      home: new Logo(),
     );
   }
 }

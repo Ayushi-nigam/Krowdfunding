@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TextFField extends StatelessWidget {
   String lableTextField;
   String hintTextField;
-  String errorText;
+  //String errorText;
   final myController;
+  bool obscureTexts; 
+  Function validInput;
   IconButton suffixIcons;
   TextInputType aTextInputType;
+  int maxLenthOfTextField;
   int maxLine;
   int minLine;
   TextFField(
       {this.lableTextField,
       this.hintTextField,
       this.suffixIcons,
-      this.errorText,
+      //this.errorText,
       this.myController,
       this.aTextInputType,
       this.maxLine,
-      this.minLine});
+      this.minLine,
+      this.maxLenthOfTextField,
+      this.obscureTexts,
+      this.validInput});
 
   Widget build(BuildContext context) {
     return TextFormField(
@@ -25,6 +32,12 @@ class TextFField extends StatelessWidget {
       maxLines: this.maxLine,
       maxLength: this.minLine,
       controller: myController,
+      obscureText: obscureTexts,
+      inputFormatters: <TextInputFormatter>[
+                  LengthLimitingTextInputFormatter(maxLenthOfTextField),
+          //         if(validInput!=null)  
+          // FilteringTextInputFormatter.allow(validInput)
+        ],
       textDirection: TextDirection.ltr,
       decoration: InputDecoration(
         labelText: lableTextField,
@@ -62,12 +75,7 @@ class TextFField extends StatelessWidget {
                 color: Theme.of(context).focusColor, style: BorderStyle.solid),
             borderRadius: BorderRadius.circular(5)),
       ),
-      validator: (value) {
-        if (value.isEmpty) {
-          return errorText;
-        }
-        return null;
-      },
+      validator:validInput
     );
   }
 }

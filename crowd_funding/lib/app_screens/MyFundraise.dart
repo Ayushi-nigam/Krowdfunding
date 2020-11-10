@@ -93,9 +93,15 @@ class MyFundraiseState extends State<MyFundraise> {
                     child: new TextFField(
                       lableTextField: "Owner Name",
                       hintTextField: "Enter The Owner Name",
-                      errorText: "Please Enter Owner Name",
                       suffixIcons: null,
+                      obscureTexts: false,
                       aTextInputType: TextInputType.name,
+                      validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter Owner Name";
+                                }
+                                return null;
+                          },
                     )),
                 new Container(
                     width: MediaQuery.of(context).size.width -
@@ -103,9 +109,15 @@ class MyFundraiseState extends State<MyFundraise> {
                     child: new TextFField(
                       lableTextField: "Project Name",
                       hintTextField: "Enter The Project Name",
-                      errorText: "Please Enter Project Name",
                       suffixIcons: null,
+                      obscureTexts: false,
                       aTextInputType: TextInputType.name,
+                       validInput:(value){
+                               if (value.isEmpty) {
+                                  return  "Please Enter Project Name";
+                                }
+                                return null;
+                          },
                     )),
                 new Container(
                     width: MediaQuery.of(context).size.width -
@@ -113,11 +125,17 @@ class MyFundraiseState extends State<MyFundraise> {
                     child: new TextFField(
                       lableTextField: "Campagin Discription",
                       hintTextField: "Enter The Campagin Discription",
-                      errorText: "Please Enter Campagin Discription",
                       suffixIcons: null,
                       maxLine: 8,
                       minLine: 100,
                       aTextInputType: TextInputType.multiline,
+                      obscureTexts: false,
+                       validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter Campagin Discription";
+                                }
+                                return null;
+                          },
                     )),
                 new Container(
                     width: MediaQuery.of(context).size.width -
@@ -125,8 +143,14 @@ class MyFundraiseState extends State<MyFundraise> {
                     child: new TextFField(
                       lableTextField: "City",
                       hintTextField: "Enter The City",
-                      errorText: "Please Enter City",
                       suffixIcons: null,
+                      obscureTexts: false,
+                       validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter City";
+                                }
+                                return null;
+                          },
                     )),
               ],
             ),
@@ -154,9 +178,15 @@ class MyFundraiseState extends State<MyFundraise> {
                     child: new TextFField(
                       lableTextField: "Campagin Days",
                       hintTextField: "Enter The Campagin Days",
-                      errorText: "Please Enter Campagin Days",
                       suffixIcons: null,
+                      obscureTexts: false,
                       aTextInputType: TextInputType.number,
+                      validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter Campagin Days";
+                                }
+                                return null;
+                          },
                     )),
                 new Container(
                     width: MediaQuery.of(context).size.width -
@@ -164,9 +194,15 @@ class MyFundraiseState extends State<MyFundraise> {
                     child: new TextFField(
                       lableTextField: "Goal Amount",
                       hintTextField: "Enter The Goal Amount",
-                      errorText: "Please Enter Goal Amount",
                       suffixIcons: null,
+                      obscureTexts: false,
                       aTextInputType: TextInputType.number,
+                      validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter Goal Amount";
+                                }
+                                return null;
+                          },
                     )),
                 new Container(
                     width: MediaQuery.of(context).size.width -
@@ -174,9 +210,15 @@ class MyFundraiseState extends State<MyFundraise> {
                     child: new TextFField(
                       lableTextField: "Goal Amount",
                       hintTextField: "Enter The Goal Amount",
-                      errorText: "Please Enter Goal Amount",
                       suffixIcons: null,
+                      obscureTexts: false,
                       aTextInputType: TextInputType.number,
+                      validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter Goal Amount";
+                                }
+                                return null;
+                          },
                     )),
                 new Container(
                     width: MediaQuery.of(context).size.width -
@@ -184,9 +226,15 @@ class MyFundraiseState extends State<MyFundraise> {
                     child: new TextFField(
                       lableTextField: "Sub Category",
                       hintTextField: "Enter The Sub Category",
-                      errorText: "Please Enter Sub Category",
                       suffixIcons: null,
+                      obscureTexts: false,
                       aTextInputType: TextInputType.number,
+                      validInput:(value){
+                               if (value.isEmpty) {
+                                  return  "Please Enter Sub Category";
+                                }
+                                return null;
+                          },
                     )),
               ],
             ),

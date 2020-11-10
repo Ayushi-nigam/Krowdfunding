@@ -19,6 +19,8 @@ class _RegistrartionForm extends State<Registration> {
   final emailId = TextEditingController();
   final password = TextEditingController();
   final confirmPassword = TextEditingController();
+  bool _showPassword=false;
+  bool _showRePassword=false;
   CollectionReference firebaseUsers =
       FirebaseFirestore.instance.collection('UserProfile');
 
@@ -49,11 +51,20 @@ class _RegistrartionForm extends State<Registration> {
                           MediaQuery.of(context).size.width / 8,
                       height: MediaQuery.of(context).size.height / 10,
                       child: TextFField(
+                          obscureTexts: false,
+                          aTextInputType: TextInputType.name,
+                          maxLenthOfTextField: null,
+                         // validInput: RegExp(r'[a-zA-Z]'),
                           lableTextField: "First Name",
                           hintTextField: "Enter The First Name",
-                          errorText: "Please Enter First Name",
-                          suffixIcons: null,
-                          myController: this.firstName),
+                          myController: this.firstName,
+                          validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter First Name";
+                                }
+                                return null;
+                          }
+                          ),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -61,10 +72,18 @@ class _RegistrartionForm extends State<Registration> {
                             MediaQuery.of(context).size.width / 8,
                         height: MediaQuery.of(context).size.height / 10,
                         child: TextFField(
+                          obscureTexts: false,
+                          aTextInputType: TextInputType.name,
+                          maxLenthOfTextField: null,
+                          //validInput: RegExp(r'[a-zA-Z]'),
                             lableTextField: "Last Name",
                             hintTextField: "Enter The Last Name",
-                            errorText: "Please Enter Last Name",
-                            suffixIcons: null,
+                           validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter Last Name";
+                                }
+                                return null;
+                          },
                             myController: this.lastName)),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -72,10 +91,21 @@ class _RegistrartionForm extends State<Registration> {
                           MediaQuery.of(context).size.width / 8,
                       height: MediaQuery.of(context).size.height / 10,
                       child: TextFField(
+                          obscureTexts: false,
+                          aTextInputType: TextInputType.emailAddress,
+                          maxLenthOfTextField: null,
+                           validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter Email Id";
+                                }
+                            Pattern pattern=r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                              RegExp regex = new RegExp(pattern);
+                              if (!regex.hasMatch(value))
+                                {return 'Enter Valid Email';}
+                                return null;
+                          },
                           lableTextField: "Email Id",
                           hintTextField: "Enter The Email Id",
-                          errorText: "Please Enter Email Id",
-                          suffixIcons: null,
                           myController: this.emailId),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
@@ -84,27 +114,57 @@ class _RegistrartionForm extends State<Registration> {
                             MediaQuery.of(context).size.width / 8,
                         height: MediaQuery.of(context).size.height / 10,
                         child: TextFField(
+                          obscureTexts: false,
+                          aTextInputType: TextInputType.number,
+                          maxLenthOfTextField: 10,
+                         validInput:(value) {
+                              if (value.isEmpty) {
+                                  return "Please Enter Mobile Number";
+                                }
+                              if (value.length != 10)
+                                 {return 'Mobile Number must be of 10 digit';}
+                                return null;},
+  
                             lableTextField: "Mobile Number",
                             hintTextField: "Enter Mobile Number",
-                            errorText: "Please Enter Mobile Number",
-                            suffixIcons: null,
-                            myController: this.mobileNumber)),
+                           
+                        myController: this.mobileNumber)),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
                         width: MediaQuery.of(context).size.width -
                             MediaQuery.of(context).size.width / 8,
                         height: MediaQuery.of(context).size.height / 10,
                         child: TextFField(
+                          maxLine: 1,
+                            obscureTexts: !_showPassword,
+                            aTextInputType: TextInputType.visiblePassword,
+                            maxLenthOfTextField: 15,
+                            //validInput: RegExp(r'[a-zA-Z0-9@#$%&*^]'),
                             lableTextField: "Enter Password",
                             hintTextField: "Enter your password",
-                            errorText: "Please Enter Password",
+                            validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter Password";
+                                }
+                                 Pattern pattern =
+                            r'^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{6,}$';
+                           RegExp regex = new RegExp(pattern);
+                            if (!regex.hasMatch(value)){
+                              return 'Invalid password';
+                            }
+                            return null;
+                          },
                             suffixIcons: IconButton(
-                              icon: new Icon(
-                                Icons.remove_red_eye,
-                                //color: this._showPassword ? Colors.blue : Colors.grey,
-                              ),
-                              onPressed: null,
-                            ),
+                               icon: Icon(
+                             _showPassword? Icons.visibility: Icons.visibility_off,
+                             color: this._showPassword ? Colors.grey : Theme.of(context).iconTheme.color,
+                             ),
+                              onPressed: (){
+                               setState(() {
+                                    _showPassword=!_showPassword;
+                                  });
+                             },
+                             ),
                             myController: this.password)),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -112,16 +172,36 @@ class _RegistrartionForm extends State<Registration> {
                             MediaQuery.of(context).size.width / 8,
                         height: MediaQuery.of(context).size.height / 10,
                         child: TextFField(
+                            obscureTexts:!_showRePassword,
+                            maxLine: 1,
+                            aTextInputType: TextInputType.visiblePassword,
+                            maxLenthOfTextField: 15,
+                           // validInput: RegExp(r'[a-zA-Z0-9@#$%&*^]'),
                             lableTextField: "Enter Re-Password",
                             hintTextField: "Enter your Re-Password",
-                            errorText: "Please Enter Re-Password",
+                            validInput:(value){
+                               if (value.isEmpty) {
+                                  return "Please Enter Re-Password";
+                                }
+                                 Pattern pattern =
+                            r'^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{6,}$';
+                           RegExp regex = new RegExp(pattern);
+                            if (!regex.hasMatch(value)){
+                              return 'Invalid Re-password';
+                            }
+                            return null;
+                          },
                             suffixIcons: IconButton(
-                              icon: Icon(
-                                Icons.remove_red_eye,
-                                //color: this._showPassword ? Colors.blue : Colors.grey,
-                              ),
-                              onPressed: null,
-                            ),
+                               icon: Icon(
+                                 _showRePassword? Icons.visibility: Icons.visibility_off,
+                                 color: Theme.of(context).iconTheme.color,
+                             ),
+                             onPressed: (){
+                               setState(() {
+                                    _showRePassword=!_showRePassword;
+                                  });
+                             },
+                             ),
                             myController: this.confirmPassword)),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -178,3 +258,4 @@ class _RegistrartionForm extends State<Registration> {
     super.dispose();
   }
 }
+
