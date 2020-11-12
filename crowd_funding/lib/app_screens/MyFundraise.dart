@@ -96,12 +96,12 @@ class MyFundraiseState extends State<MyFundraise> {
                       suffixIcons: null,
                       obscureTexts: false,
                       aTextInputType: TextInputType.name,
-                      validInput:(value){
-                               if (value.isEmpty) {
-                                  return "Please Enter Owner Name";
-                                }
-                                return null;
-                          },
+                      validInput: (value) {
+                        if (value.isEmpty) {
+                          return "Please Enter Owner Name";
+                        }
+                        return null;
+                      },
                     )),
                 new Container(
                     width: MediaQuery.of(context).size.width -
@@ -112,12 +112,12 @@ class MyFundraiseState extends State<MyFundraise> {
                       suffixIcons: null,
                       obscureTexts: false,
                       aTextInputType: TextInputType.name,
-                       validInput:(value){
-                               if (value.isEmpty) {
-                                  return  "Please Enter Project Name";
-                                }
-                                return null;
-                          },
+                      validInput: (value) {
+                        if (value.isEmpty) {
+                          return "Please Enter Project Name";
+                        }
+                        return null;
+                      },
                     )),
                 new Container(
                     width: MediaQuery.of(context).size.width -
@@ -130,12 +130,12 @@ class MyFundraiseState extends State<MyFundraise> {
                       minLine: 100,
                       aTextInputType: TextInputType.multiline,
                       obscureTexts: false,
-                       validInput:(value){
-                               if (value.isEmpty) {
-                                  return "Please Enter Campagin Discription";
-                                }
-                                return null;
-                          },
+                      validInput: (value) {
+                        if (value.isEmpty) {
+                          return "Please Enter Campagin Discription";
+                        }
+                        return null;
+                      },
                     )),
                 new Container(
                     width: MediaQuery.of(context).size.width -
@@ -145,12 +145,12 @@ class MyFundraiseState extends State<MyFundraise> {
                       hintTextField: "Enter The City",
                       suffixIcons: null,
                       obscureTexts: false,
-                       validInput:(value){
-                               if (value.isEmpty) {
-                                  return "Please Enter City";
-                                }
-                                return null;
-                          },
+                      validInput: (value) {
+                        if (value.isEmpty) {
+                          return "Please Enter City";
+                        }
+                        return null;
+                      },
                     )),
               ],
             ),
@@ -181,12 +181,12 @@ class MyFundraiseState extends State<MyFundraise> {
                       suffixIcons: null,
                       obscureTexts: false,
                       aTextInputType: TextInputType.number,
-                      validInput:(value){
-                               if (value.isEmpty) {
-                                  return "Please Enter Campagin Days";
-                                }
-                                return null;
-                          },
+                      validInput: (value) {
+                        if (value.isEmpty) {
+                          return "Please Enter Campagin Days";
+                        }
+                        return null;
+                      },
                     )),
                 new Container(
                     width: MediaQuery.of(context).size.width -
@@ -197,12 +197,12 @@ class MyFundraiseState extends State<MyFundraise> {
                       suffixIcons: null,
                       obscureTexts: false,
                       aTextInputType: TextInputType.number,
-                      validInput:(value){
-                               if (value.isEmpty) {
-                                  return "Please Enter Goal Amount";
-                                }
-                                return null;
-                          },
+                      validInput: (value) {
+                        if (value.isEmpty) {
+                          return "Please Enter Goal Amount";
+                        }
+                        return null;
+                      },
                     )),
                 new Container(
                     width: MediaQuery.of(context).size.width -
@@ -213,12 +213,12 @@ class MyFundraiseState extends State<MyFundraise> {
                       suffixIcons: null,
                       obscureTexts: false,
                       aTextInputType: TextInputType.number,
-                      validInput:(value){
-                               if (value.isEmpty) {
-                                  return "Please Enter Goal Amount";
-                                }
-                                return null;
-                          },
+                      validInput: (value) {
+                        if (value.isEmpty) {
+                          return "Please Enter Goal Amount";
+                        }
+                        return null;
+                      },
                     )),
                 new Container(
                     width: MediaQuery.of(context).size.width -
@@ -229,12 +229,12 @@ class MyFundraiseState extends State<MyFundraise> {
                       suffixIcons: null,
                       obscureTexts: false,
                       aTextInputType: TextInputType.number,
-                      validInput:(value){
-                               if (value.isEmpty) {
-                                  return  "Please Enter Sub Category";
-                                }
-                                return null;
-                          },
+                      validInput: (value) {
+                        if (value.isEmpty) {
+                          return "Please Enter Sub Category";
+                        }
+                        return null;
+                      },
                     )),
               ],
             ),
@@ -243,13 +243,115 @@ class MyFundraiseState extends State<MyFundraise> {
                 color: Theme.of(context).primaryColorLight),
           )),
       Step(
-        state: isComplete(2),
-        isActive: isActive(2),
-        title: const Text('Documents', style: TextStyle(color: Colors.white)),
-        content: Column(
-          children: <Widget>[],
-        ),
-      ),
+          state: isComplete(2),
+          isActive: isActive(2),
+          title: const Text('Documents', style: TextStyle(color: Colors.white)),
+          content: new Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).size.height / 2,
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  new Align(
+                      alignment: Alignment.topLeft,
+                      child: new Text("Upload Photos")),
+                  new Container(
+                    child: new Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        new Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            new Container(
+                              width: 20,
+                              child: new Icon(Icons.person),
+                            ),
+                            new Container(
+                              width: 20,
+                              child: new Icon(Icons.person),
+                            ),
+                            new Container(
+                              width: 20,
+                              child: new Icon(Icons.person),
+                            )
+                          ],
+                        ),
+                        new Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            new Container(
+                              width: 20,
+                              child: new Icon(Icons.person),
+                            ),
+                            new Container(
+                              width: 20,
+                              child: new Icon(Icons.person),
+                            ),
+                            new Container(
+                              width: 20,
+                              color: Colors.white,
+                              child: new Icon(Icons.person),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                    width: MediaQuery.of(context).size.width -
+                        MediaQuery.of(context).size.width / 4,
+                    decoration: new BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Theme.of(context).primaryColorLight),
+                  ),
+                  new Divider(
+                    thickness: 5,
+                  ),
+                  new Align(
+                      alignment: Alignment.topLeft,
+                      child: new Text("Upload Documents")),
+                  new Container(
+                    child: new Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        new Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            new Container(
+                              child: new Icon(Icons.person),
+                            ),
+                            new Container(
+                              child: new Icon(Icons.person),
+                            ),
+                            new Container(
+                              child: new Icon(Icons.person),
+                            )
+                          ],
+                        ),
+                        new Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            new Container(
+                              child: new Icon(Icons.person),
+                            ),
+                            new Container(
+                              child: new Icon(Icons.person),
+                            ),
+                            new Container(
+                              child: new Icon(Icons.person),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                    width: MediaQuery.of(context).size.width -
+                        MediaQuery.of(context).size.width / 4,
+                    decoration: new BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Theme.of(context).primaryColorLight),
+                  ),
+                ],
+              )))
     ];
   }
 
