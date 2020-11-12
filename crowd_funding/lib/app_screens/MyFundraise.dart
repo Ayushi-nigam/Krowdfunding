@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crowd_funding/app_screens/TextFField.dart';
+import 'package:crowd_funding/common/CameraApp.dart';
 import 'package:crowd_funding/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -19,12 +20,18 @@ class MyFundraiseState extends State<MyFundraise> {
   String selectedValueResidence;
   CollectionReference firebaseUsers =
       FirebaseFirestore.instance.collection('UserProfile');
+  List<RadioModel> sampleData = new List<RadioModel>();
   @override
   void initState() {
     items.add(DropdownMenuItem(
       child: Text("Bhopal"),
       value: "Bhopal",
     ));
+    sampleData.add(new RadioModel(true, 'english'));
+    sampleData.add(new RadioModel(false, 'hindi'));
+    sampleData.add(new RadioModel(false, 'marathi'));
+    sampleData.add(new RadioModel(false, 'odiya'));
+    sampleData.add(new RadioModel(false, 'bengali'));
   }
 
   next() {
@@ -246,112 +253,70 @@ class MyFundraiseState extends State<MyFundraise> {
           state: isComplete(2),
           isActive: isActive(2),
           title: const Text('Documents', style: TextStyle(color: Colors.white)),
-          content: new Container(
-              width: MediaQuery.of(context).size.width,
+          content: new Column(children: [
+            new Container(
               height: MediaQuery.of(context).size.height -
                   MediaQuery.of(context).size.height / 2,
-              child: new Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              width: MediaQuery.of(context).size.width -
+                  MediaQuery.of(context).size.width / 4,
+              decoration: new BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Theme.of(context).primaryColorLight),
+              alignment: Alignment.center,
+              child: new Scrollbar(
+                  child: new Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  new Align(
-                      alignment: Alignment.topLeft,
-                      child: new Text("Upload Photos")),
-                  new Container(
-                    child: new Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        new Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            new Container(
-                              width: 20,
-                              child: new Icon(Icons.person),
-                            ),
-                            new Container(
-                              width: 20,
-                              child: new Icon(Icons.person),
-                            ),
-                            new Container(
-                              width: 20,
-                              child: new Icon(Icons.person),
-                            )
-                          ],
-                        ),
-                        new Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            new Container(
-                              width: 20,
-                              child: new Icon(Icons.person),
-                            ),
-                            new Container(
-                              width: 20,
-                              child: new Icon(Icons.person),
-                            ),
-                            new Container(
-                              width: 20,
-                              color: Colors.white,
-                              child: new Icon(Icons.person),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                    width: MediaQuery.of(context).size.width -
-                        MediaQuery.of(context).size.width / 4,
-                    decoration: new BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).primaryColorLight),
+                  Align(
+                    child: new Text("Upload Photos",
+                        style: new TextStyle(fontSize: 18)),
                   ),
-                  new Divider(
-                    thickness: 5,
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height /
+                        3, // constrain height
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3),
+                      itemCount: sampleData.length,
+                      itemBuilder: (context, index) {
+                        return new InkWell(
+                          onTap: () {
+                            setState(() {
+                              sampleData.forEach(
+                                  (element) => element.isSelected = false);
+                              sampleData[index].isSelected = true;
+                            });
+                          },
+                          child: new RadioItem(sampleData[index]),
+                        );
+                      },
+                    ),
                   ),
                   new Align(
-                      alignment: Alignment.topLeft,
-                      child: new Text("Upload Documents")),
-                  new Container(
-                    child: new Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        new Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            new Container(
-                              child: new Icon(Icons.person),
-                            ),
-                            new Container(
-                              child: new Icon(Icons.person),
-                            ),
-                            new Container(
-                              child: new Icon(Icons.person),
-                            )
-                          ],
+                    alignment: Alignment.bottomRight,
+                    child: ClipOval(
+                      child: Material(
+                        color: Theme.of(context).buttonColor, // button color
+                        child: InkWell(
+                          splashColor: Colors.red, // inkwell color
+                          child: SizedBox(
+                              width: 56, height: 56, child: Icon(Icons.add)),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => new CameraApp(),
+                              ),
+                            );
+                          },
                         ),
-                        new Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            new Container(
-                              child: new Icon(Icons.person),
-                            ),
-                            new Container(
-                              child: new Icon(Icons.person),
-                            ),
-                            new Container(
-                              child: new Icon(Icons.person),
-                            )
-                          ],
-                        )
-                      ],
+                      ),
                     ),
-                    width: MediaQuery.of(context).size.width -
-                        MediaQuery.of(context).size.width / 4,
-                    decoration: new BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).primaryColorLight),
-                  ),
+                  )
                 ],
-              )))
+              )),
+            ),
+          ]))
     ];
   }
 
@@ -378,4 +343,43 @@ class MyFundraiseState extends State<MyFundraise> {
               ),
             ])));
   }
+}
+
+class RadioItem extends StatelessWidget {
+  final RadioModel _item;
+  RadioItem(this._item);
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      margin: new EdgeInsets.all(15.0),
+      child: new Row(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          new SizedBox(
+            height: 200,
+          ),
+          new Container(
+            child: new Center(
+              child: new Icon(Icons.verified_user_sharp),
+            ),
+            width: MediaQuery.of(context).size.width / 6,
+            height: MediaQuery.of(context).size.width / 2,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              color: _item.isSelected
+                  ? Color.fromARGB(255, 26, 180, 111)
+                  : Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RadioModel {
+  bool isSelected;
+  final String buttonText;
+
+  RadioModel(this.isSelected, this.buttonText);
 }

@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:crowd_funding/common/FileStorage.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class CameraExampleHome extends StatefulWidget {
   @override
@@ -38,6 +40,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    availableCameras().then((value) => cameras = value);
   }
 
   @override
@@ -99,6 +103,16 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
               children: <Widget>[
                 _cameraTogglesRowWidget(),
                 _thumbnailWidget(),
+                new Align(
+                    alignment: Alignment.bottomLeft,
+                    child: new RaisedButton(
+                      onPressed: () {
+                        FileStorage aFileStorage = new FileStorage();
+                        aFileStorage.uploadFile(new File(imagePath));
+                      },
+                      child: new Text("Save Image"),
+                      color: Theme.of(context).buttonColor,
+                    ))
               ],
             ),
           ),
