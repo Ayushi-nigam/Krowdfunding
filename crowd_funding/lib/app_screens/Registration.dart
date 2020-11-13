@@ -49,7 +49,7 @@ class _RegistrartionForm extends State<Registration> {
                     Container(
                       width: MediaQuery.of(context).size.width -
                           MediaQuery.of(context).size.width / 8,
-                      height: MediaQuery.of(context).size.height / 10,
+                      height: MediaQuery.of(context).size.height / 8,
                       child: TextFField(
                           obscureTexts: false,
                           aTextInputType: TextInputType.name,
@@ -70,7 +70,7 @@ class _RegistrartionForm extends State<Registration> {
                     Container(
                         width: MediaQuery.of(context).size.width -
                             MediaQuery.of(context).size.width / 8,
-                        height: MediaQuery.of(context).size.height / 10,
+                        height: MediaQuery.of(context).size.height / 8,
                         child: TextFField(
                           obscureTexts: false,
                           aTextInputType: TextInputType.name,
@@ -89,7 +89,7 @@ class _RegistrartionForm extends State<Registration> {
                     Container(
                       width: MediaQuery.of(context).size.width -
                           MediaQuery.of(context).size.width / 8,
-                      height: MediaQuery.of(context).size.height / 10,
+                      height: MediaQuery.of(context).size.height / 8,
                       child: TextFField(
                           obscureTexts: false,
                           aTextInputType: TextInputType.emailAddress,
@@ -112,7 +112,7 @@ class _RegistrartionForm extends State<Registration> {
                     Container(
                         width: MediaQuery.of(context).size.width -
                             MediaQuery.of(context).size.width / 8,
-                        height: MediaQuery.of(context).size.height / 10,
+                        height: MediaQuery.of(context).size.height /8,
                         child: TextFField(
                           obscureTexts: false,
                           aTextInputType: TextInputType.number,
@@ -133,7 +133,7 @@ class _RegistrartionForm extends State<Registration> {
                     Container(
                         width: MediaQuery.of(context).size.width -
                             MediaQuery.of(context).size.width / 8,
-                        height: MediaQuery.of(context).size.height / 10,
+                        height: MediaQuery.of(context).size.height / 8,
                         child: TextFField(
                           maxLine: 1,
                             obscureTexts: !_showPassword,
@@ -170,7 +170,7 @@ class _RegistrartionForm extends State<Registration> {
                     Container(
                         width: MediaQuery.of(context).size.width -
                             MediaQuery.of(context).size.width / 8,
-                        height: MediaQuery.of(context).size.height / 10,
+                        height: MediaQuery.of(context).size.height / 8,
                         child: TextFField(
                             obscureTexts:!_showRePassword,
                             maxLine: 1,
@@ -189,6 +189,8 @@ class _RegistrartionForm extends State<Registration> {
                             if (!regex.hasMatch(value)){
                               return 'Invalid Re-password';
                             }
+                             if(this.confirmPassword.text != this.password.text)
+                                   return 'Re-Password Not Match With Password';
                             return null;
                           },
                             suffixIcons: IconButton(

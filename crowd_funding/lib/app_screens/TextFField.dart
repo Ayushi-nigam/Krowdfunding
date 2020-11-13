@@ -17,7 +17,6 @@ class TextFField extends StatelessWidget {
       {this.lableTextField,
       this.hintTextField,
       this.suffixIcons,
-      //this.errorText,
       this.myController,
       this.aTextInputType,
       this.maxLine,
@@ -68,8 +67,14 @@ class TextFField extends StatelessWidget {
         errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(
-              color: Colors.red[600],
+              color: Theme.of(context).errorColor,
             )),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+                color: Theme.of(context).disabledColor,
+                style: BorderStyle.solid)
+            ),
         focusedErrorBorder: OutlineInputBorder(
             borderSide: BorderSide(
                 color: Theme.of(context).focusColor, style: BorderStyle.solid),

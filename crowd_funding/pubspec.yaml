@@ -57,6 +57,7 @@ flutter:
   assets:
     - assets/Images/Logo.jpg
     - assets/Images/profile.png
+    - assets/Images/baseline_account_box_black_18dp.png
     - assets/riv/sucessCheck.flr
     #   - images/a_dot_ham.jpeg
 

@@ -22,17 +22,18 @@ class Menu extends StatelessWidget {
                     child: Row(
                   children: <Widget>[
                     SizedBox(
-                      width: 100,
-                      height: 150,
-                      child: ProfileLogoImage(),
+                      width: MediaQuery.of(context).size.width -
+                          MediaQuery.of(context).size.width / 1.3,
+                      height: MediaQuery.of(context).size.height/5,
+                      child: Image(image: AssetImage('assets/Images/profile.png')),
                     ),
                     new Container(
                         margin: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.width - 300),
+                            top: MediaQuery.of(context).size.width/8),
                         child: new Column(children: <Widget>[
                           Text("Akash Nigam",
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontFamily: "Roboto",
                                 fontWeight: FontWeight.w600,
                               )),
@@ -43,7 +44,7 @@ class Menu extends StatelessWidget {
                                     textDirection: TextDirection.ltr,
                                     style: TextStyle(
                                       color: Color(0xB3FFFFFF),
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontFamily: "Roboto",
                                     )),
                                 onPressed: () {
@@ -57,15 +58,15 @@ class Menu extends StatelessWidget {
                               ),
                               Icon(
                                 Icons.edit,
-                                color: Color(0xffFFFFFF),
-                                size: 18,
+                                color: Theme.of(context).iconTheme.color,
+                                size: 20,
                               )
                             ],
                           )
                         ]))
                   ],
                 )),
-                decoration: new BoxDecoration(color: Color(0xff455A64)),
+                decoration: new BoxDecoration(color: Theme.of(context).appBarTheme.color),
               ),
               new ListTile(
                 leading: Icon(FontAwesomeIcons.moneyBillAlt),
@@ -157,13 +158,3 @@ class Menu extends StatelessWidget {
   }
 }
 
-class ProfileLogoImage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    AssetImage profilelogoAssetImage = AssetImage('assets/Images/profile.png');
-    Image profilelogoImage = Image(image: profilelogoAssetImage);
-    return Container(
-      child: profilelogoImage,
-    );
-  }
-}

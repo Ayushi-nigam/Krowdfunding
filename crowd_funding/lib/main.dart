@@ -24,8 +24,10 @@ class CrowdfundApp extends StatelessWidget {
           primaryColorLight: Color(0xffCFD8DC),
           focusColor: Color(0xffCFD8DC),
           primaryColor: Color(0xffCFD8DC),
+          disabledColor: Colors.white54,
+          errorColor: Colors.red[600],
           appBarTheme: new AppBarTheme(
-            color: new Color(0xff718792),
+            color: new Color(0xff455A64),
           ),
           iconTheme: new IconThemeData(color: Colors.white),
           textTheme: TextTheme(bodyText1: TextStyle(color: Color(0xffFFFFFF))),
