@@ -18,8 +18,11 @@ class FileStorage {
   /// The user selects a file, and the task is added to the list.
   firebase_storage.UploadTask uploadFile(File file) {
     // Create a Reference to the file
-    firebase_storage.Reference ref =
-        firebase_storage.FirebaseStorage.instance.ref().child('playground');
+    firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+        .ref()
+        .child('akash')
+        .child("image")
+        .child(file.path);
 
     return ref.putFile(file);
   }

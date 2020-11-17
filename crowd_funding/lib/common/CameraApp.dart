@@ -1,11 +1,22 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crowd_funding/common/FileStorage.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:camera/camera.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:crowd_funding/common/FileStorage.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+
+List<CameraDescription> cameras = [];
+
+Future<void> main() async {
+  // Fetch the available cameras before initializing the app.
+  try {} on CameraException catch (e) {
+    logError(e.code, e.description);
+  }
+  runApp(CameraApp());
+}
 
 class CameraExampleHome extends StatefulWidget {
   @override
@@ -35,13 +46,24 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   CameraController controller;
   String imagePath;
   bool enableAudio = true;
-
+  bool USE_FIRESTORE_EMULATOR = false;
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    hello().then((value) {
+      WidgetsBinding.instance.addObserver(this);
+      if (USE_FIRESTORE_EMULATOR) {
+        FirebaseFirestore.instance.settings = Settings(
+            host: 'localhost:8080',
+            sslEnabled: false,
+            persistenceEnabled: false);
+      }
+    });
+  }
 
-    availableCameras().then((value) => cameras = value);
+  Future<void> hello() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    cameras = await availableCameras();
   }
 
   @override
@@ -109,6 +131,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                       onPressed: () {
                         FileStorage aFileStorage = new FileStorage();
                         aFileStorage.uploadFile(new File(imagePath));
+                        Navigator.pop(context);
                       },
                       child: new Text("Save Image"),
                       color: Theme.of(context).buttonColor,
@@ -281,9 +304,6 @@ class CameraApp extends StatelessWidget {
   Widget build(BuildContext context) {
     try {
       WidgetsFlutterBinding.ensureInitialized();
-      availableCameras().then((value) {
-        cameras = value;
-      });
     } on CameraException catch (e) {
       logError(e.code, e.description);
     }
@@ -292,5 +312,3 @@ class CameraApp extends StatelessWidget {
     );
   }
 }
-
-List<CameraDescription> cameras = [];
