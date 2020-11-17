@@ -22,18 +22,22 @@ class FileStorage {
         .ref()
         .child('akash')
         .child("image")
-        .child(file.path);
+        .child('document1');
 
     return ref.putFile(file);
   }
 
   /// Handles the user pressing the PopupMenuItem item.
 
-  void _downloadFile(firebase_storage.Reference ref) async {
+  Future<String> downloadFile(firebase_storage.Reference ref) async {
     final Directory systemTempDir = Directory.systemTemp;
     final File tempFile = File('${systemTempDir.path}/temp-${ref.name}');
     if (tempFile.existsSync()) await tempFile.delete();
-
-    await ref.writeToFile(tempFile);
+    try {
+      await ref.writeToFile(tempFile);
+    } catch (e) {
+      return null;
+    }
+    return tempFile.path;
   }
 }
