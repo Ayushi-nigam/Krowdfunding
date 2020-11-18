@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'TextFField.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 import 'package:crowd_funding/common/successTick.dart';
+import 'camera.dart';
 class EditProfile extends StatefulWidget {
   @override
   _EditProfile createState() {
@@ -9,6 +14,7 @@ class EditProfile extends StatefulWidget {
   }
 }
 class _EditProfile extends State<EditProfile> {
+  File _image;
   final editFormKey = GlobalKey<FormState>();
   TextEditingController name;
   TextEditingController email;
@@ -17,6 +23,24 @@ class _EditProfile extends State<EditProfile> {
   
   @override
   Widget build(BuildContext context) {
+     Future getImageFromCamera() async{
+     var image = await ImagePicker.pickImage(
+    source: ImageSource.camera, 
+  );
+
+  setState(() {
+    _image = image;
+    print('Image Pathssdggjhl $_image');
+  });
+
+  }
+      Future uploadPic(BuildContext context) async{
+    String fileName = basename(_image.path);
+    firebase_storage.Reference fireBaseStorageRef= firebase_storage.FirebaseStorage.instance.ref().child("1nucdckUSJvLLa93pSZ4").child(fileName);
+   firebase_storage.UploadTask uploadTasks= fireBaseStorageRef.putFile(_image);
+   firebase_storage.TaskSnapshot taskSnapshot= await uploadTasks.whenComplete(() => null);
+   taskSnapshot.ref.getDownloadURL().then((value) => print("Done : $value"));
+  }
     return new FutureBuilder(
       future:firestoreInstance.collection('UserProfile').doc("1nucdckUSJvLLa93pSZ4").get(),
     builder: (context, snapshot) {
@@ -45,17 +69,22 @@ class _EditProfile extends State<EditProfile> {
             Center(
             child: Stack(
               children: [
-                Container(
-                  width: MediaQuery.of(context).size.width,           
-                height: MediaQuery.of(context).size.height/5,
-                decoration: BoxDecoration(
-                  boxShadow:[ BoxShadow(blurRadius: 10.0,
-                  color:Colors.white60,),],
-                  shape: BoxShape.circle,
-                  image:  DecorationImage(
-                    fit:BoxFit.fitHeight,
-                    image:AssetImage('assets/Images/profile.png'))
-                )),
+                 Align(
+                    alignment: Alignment.center,
+                    child: CircleAvatar(
+                      radius:MediaQuery.of(context).size.width/5,   
+                      child: ClipOval(
+                        child: new SizedBox(
+                           width: MediaQuery.of(context).size.width,           
+                           height: MediaQuery.of(context).size.height/5,
+                          child: (_image!=null)?Image.file(
+                            _image,
+                            fit: BoxFit.fill,
+                          ):Image(image: AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,),
+                        ),
+                      ),
+                    ),
+                  ),
                 Positioned(
                   bottom: 0,
                   right: MediaQuery.of(context).size.width / 3.5,
@@ -70,7 +99,13 @@ class _EditProfile extends State<EditProfile> {
                     color: Colors.grey[700] ),
                 child: IconButton(
                   icon:Icon(Icons.camera_enhance_rounded,
-                  color: Colors.black,),),
+                  color: Colors.black,),
+                  onPressed: () {
+                    getImageFromCamera();
+                                    
+                                  
+                  } ,
+                  ),
                 ))
               ],)),
              Column(
@@ -183,7 +218,7 @@ class _EditProfile extends State<EditProfile> {
                                   fontSize: 14, fontWeight: FontWeight.w400),
                             ),
                             onPressed: () {
-                              
+                               uploadPic(context);
                               // if (editFormKey.currentState.validate()) {
                               // Navigator.push(
                               //       context,
