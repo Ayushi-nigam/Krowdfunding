@@ -13,10 +13,10 @@ class User {
     password = "";
   }
   Map<String, dynamic> toJson() => {
-        'firstName': firstName,
-        'lastName': lastName,
-        'mobileNumber': mobileNumber,
-        'emailId': emailId,
-        'password': password
+        'firstName': this.firstName,
+        'lastName': this.lastName,
+        'mobileNumber': this.mobileNumber,
+        'emailId': this.emailId,
+        'password': this.password
       };
 }

@@ -224,7 +224,7 @@ class _RegistrartionForm extends State<Registration> {
                             onPressed: () {
                               if (registrationFormKey.currentState.validate()) {
                                 this.setUserDetail();
-                                firebaseUsers
+                                this.firebaseUsers
                                     .add(this.aUser.toJson())
                                     .then((value) {
                                   Navigator.push(
@@ -250,7 +250,6 @@ class _RegistrartionForm extends State<Registration> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     this.firstName.dispose();
     this.lastName.dispose();
     this.mobileNumber.dispose();
