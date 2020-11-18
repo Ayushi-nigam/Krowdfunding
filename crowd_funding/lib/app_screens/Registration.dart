@@ -51,7 +51,7 @@ class _RegistrartionForm extends State<Registration> {
                           MediaQuery.of(context).size.width / 8,
                       height: MediaQuery.of(context).size.height / 8,
                       child: TextFField(
-                          obscureTexts: false,
+                           obscureTexts: false,
                           aTextInputType: TextInputType.name,
                           maxLenthOfTextField: null,
                          // validInput: RegExp(r'[a-zA-Z]'),
@@ -72,7 +72,7 @@ class _RegistrartionForm extends State<Registration> {
                             MediaQuery.of(context).size.width / 8,
                         height: MediaQuery.of(context).size.height / 8,
                         child: TextFField(
-                          obscureTexts: false,
+                        obscureTexts: false,
                           aTextInputType: TextInputType.name,
                           maxLenthOfTextField: null,
                           //validInput: RegExp(r'[a-zA-Z]'),
@@ -114,7 +114,7 @@ class _RegistrartionForm extends State<Registration> {
                             MediaQuery.of(context).size.width / 8,
                         height: MediaQuery.of(context).size.height /8,
                         child: TextFField(
-                          obscureTexts: false,
+                         obscureTexts: false,
                           aTextInputType: TextInputType.number,
                           maxLenthOfTextField: 10,
                          validInput:(value) {
@@ -136,7 +136,7 @@ class _RegistrartionForm extends State<Registration> {
                         height: MediaQuery.of(context).size.height / 8,
                         child: TextFField(
                           maxLine: 1,
-                            obscureTexts: !_showPassword,
+                          obscureTexts: !_showPassword,
                             aTextInputType: TextInputType.visiblePassword,
                             maxLenthOfTextField: 15,
                             //validInput: RegExp(r'[a-zA-Z0-9@#$%&*^]'),
@@ -172,7 +172,7 @@ class _RegistrartionForm extends State<Registration> {
                             MediaQuery.of(context).size.width / 8,
                         height: MediaQuery.of(context).size.height / 8,
                         child: TextFField(
-                            obscureTexts:!_showRePassword,
+                          obscureTexts:!_showRePassword,
                             maxLine: 1,
                             aTextInputType: TextInputType.visiblePassword,
                             maxLenthOfTextField: 15,

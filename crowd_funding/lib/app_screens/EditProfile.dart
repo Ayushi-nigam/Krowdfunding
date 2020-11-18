@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'TextFField.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crowd_funding/common/successTick.dart';
 class EditProfile extends StatefulWidget {
   @override
@@ -9,12 +10,23 @@ class EditProfile extends StatefulWidget {
 }
 class _EditProfile extends State<EditProfile> {
   final editFormKey = GlobalKey<FormState>();
-  bool enableName=false;
-  bool email=false;
-  bool mobile=false;
+  TextEditingController name;
+  TextEditingController email;
+  TextEditingController mobileNo;
+  final firestoreInstance = FirebaseFirestore.instance;
+  
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return new FutureBuilder(
+      future:firestoreInstance.collection('UserProfile').doc("1nucdckUSJvLLa93pSZ4").get(),
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+      
+      name=TextEditingController(text:snapshot.data["firstName"]+snapshot.data["lastName"]);
+      email=TextEditingController(text:snapshot.data["emailId"]);
+      mobileNo=TextEditingController(text:snapshot.data["mobileNumber"]);
+    
+       return Scaffold(
       appBar: new AppBar(
         backgroundColor: Theme.of(context).appBarTheme.color,
         iconTheme: Theme.of(context).iconTheme,
@@ -30,14 +42,37 @@ class _EditProfile extends State<EditProfile> {
             child: new Center(
               child:ListView(children: [
             SizedBox(height: MediaQuery.of(context).size.height/30),
-            Container(
-            child: SizedBox(
-                width: MediaQuery.of(context).size.width,           
-                height: MediaQuery.of(context).size.height/4,
-                child:Image(image: AssetImage('assets/Images/profile.png'),
-                alignment: Alignment.center,
-                 fit: BoxFit.contain
-              ))),
+            Center(
+            child: Stack(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,           
+                height: MediaQuery.of(context).size.height/5,
+                decoration: BoxDecoration(
+                  boxShadow:[ BoxShadow(blurRadius: 10.0,
+                  color:Colors.white60,),],
+                  shape: BoxShape.circle,
+                  image:  DecorationImage(
+                    fit:BoxFit.fitHeight,
+                    image:AssetImage('assets/Images/profile.png'))
+                )),
+                Positioned(
+                  bottom: 0,
+                  right: MediaQuery.of(context).size.width / 3.5,
+                  child: Container(
+                    width:MediaQuery.of(context).size.width / 8,
+                      height: MediaQuery.of(context).size.height / 16,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(width:2,
+                    color:Colors.black12
+                    ),
+                    color: Colors.grey[700] ),
+                child: IconButton(
+                  icon:Icon(Icons.camera_enhance_rounded,
+                  color: Colors.black,),),
+                ))
+              ],)),
              Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   mainAxisSize: MainAxisSize.max,
@@ -54,14 +89,14 @@ class _EditProfile extends State<EditProfile> {
                                  color: Theme.of(context).iconTheme.color,
                                  size: 30,
                              ),
-                            
                              ),
+                             myController:name,
                           obscureTexts: false,
                           aTextInputType: TextInputType.name,
                           maxLenthOfTextField: null,
                          // validInput: RegExp(r'[a-zA-Z]'),
                           lableTextField: "Full Name",
-                          hintTextField: "Enter The Full Name",
+                          hintTextField: "Enter Full Name",
                           //myController: this.firstName,
                           validInput:(value){
                                if (value.isEmpty) {
@@ -83,6 +118,7 @@ class _EditProfile extends State<EditProfile> {
                                  color: Theme.of(context).iconTheme.color,
                                  size: 30,
                              )),
+                             myController: email,
                           obscureTexts: false,
                           aTextInputType: TextInputType.emailAddress,
                           maxLenthOfTextField: null,
@@ -113,12 +149,7 @@ class _EditProfile extends State<EditProfile> {
                                  color: Theme.of(context).iconTheme.color,
                                  size: 30,
                              ),
-                             onPressed: (){
-                               setState(() {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-                                 mobile=!mobile;
-                               });
-                               
-                             },),
+                                ),
                           obscureTexts: false,
                           aTextInputType: TextInputType.number,
                           maxLenthOfTextField: 10,
@@ -133,7 +164,7 @@ class _EditProfile extends State<EditProfile> {
                             lableTextField: "Mobile Number",
                             hintTextField: "Enter Mobile Number",
                            
-                        //myController: this.mobileNumber
+                        myController: mobileNo
                         )),
                         SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -152,19 +183,23 @@ class _EditProfile extends State<EditProfile> {
                                   fontSize: 14, fontWeight: FontWeight.w400),
                             ),
                             onPressed: () {
-                              if (editFormKey.currentState.validate()) {
-                              Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => new SuccessTick(),
-                                    ),
-                                  );
+                              
+                              // if (editFormKey.currentState.validate()) {
+                              // Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //         builder: (context) => new SuccessTick(),
+                              //       ),
+                              //     );
                                 
-                              }
+                              // }
                             })),
                     ] )
       ])
             ))
-    );
+    );}
+    else
+    return CircularProgressIndicator();
+    });
   }
 }

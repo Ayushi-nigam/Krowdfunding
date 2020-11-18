@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 class TextFField extends StatelessWidget {
   String lableTextField;
   String hintTextField;
-  //String errorText;
   final myController;
   bool obscureTexts; 
   Function validInput;
@@ -27,6 +26,7 @@ class TextFField extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return TextFormField(
+      //autofocus:true,
       keyboardType: this.aTextInputType,
       maxLines: this.maxLine,
       maxLength: this.minLine,
