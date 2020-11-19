@@ -40,7 +40,7 @@ class _LoginForm extends State<Login> {
                     Container(
                         width: MediaQuery.of(context).size.width -
                               MediaQuery.of(context).size.width / 8,
-                        height: MediaQuery.of(context).size.height / 10,
+                        height: MediaQuery.of(context).size.height / 8,
                         child: TextFField(
                           obscureTexts: false,
                           aTextInputType: TextInputType.emailAddress,
@@ -66,7 +66,7 @@ class _LoginForm extends State<Login> {
                     Container(
                         width: MediaQuery.of(context).size.width -
                             MediaQuery.of(context).size.width / 8,
-                        height: MediaQuery.of(context).size.height / 10,
+                        height: MediaQuery.of(context).size.height / 8,
                         child: TextFField(
                           obscureTexts: !_showPassword,
                           aTextInputType: TextInputType.visiblePassword,
