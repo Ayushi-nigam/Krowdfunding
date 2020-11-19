@@ -9,7 +9,7 @@ bool USE_FIRESTORE_EMULATOR = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  print("dadasd");
+  
   runApp(new CrowdfundApp());
 }
 
