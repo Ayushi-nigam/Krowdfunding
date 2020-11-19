@@ -1,51 +1,77 @@
+import 'dart:typed_data';
+import 'package:crowd_funding/app_screens/My_Donation.dart';
 import 'package:flutter/material.dart';
 import 'TextFField.dart';
+import 'camera.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:crowd_funding/common/successTick.dart';
-import 'camera.dart';
+import 'My_Donation.dart';
 class EditProfile extends StatefulWidget {
+  
   @override
   _EditProfile createState() {
     return _EditProfile();
   }
 }
 class _EditProfile extends State<EditProfile> {
-  File _image;
+   File _image;
+  // Uint8List imageFile;
   final editFormKey = GlobalKey<FormState>();
   TextEditingController name;
   TextEditingController email;
   TextEditingController mobileNo;
   final firestoreInstance = FirebaseFirestore.instance;
-  
+  camera cameraa= new camera();
+  //firebase_storage.Reference photosReference = firebase_storage.FirebaseStorage.instance.ref().child("ProfilePhotos");
+  //   Future getProfileImage() async{
+  //   int maxSize=7*1024*1024;
+  //   await photosReference.child("1nucdckUSJvLLa93pSZ4.jpg").getData(maxSize).then((data) {
+  //     imageFile=data;
+  //   }).catchError((error){
+
+  //   });
+  // }
+  // Widget decideProfileImage(){
+  //   if(imageFile==null){
+  //     return Image(image: AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
+  //   }
+  //   else{
+  //     return Image.memory(imageFile,fit: BoxFit.fill,);
+  //   }}
+  // @override
+  // void initState(){
+  //   super.initState();
+  //   getProfileImage();
+  // }
   @override
   Widget build(BuildContext context) {
-     Future getImageFromCamera() async{
-     var image = await ImagePicker.pickImage(
-    source: ImageSource.camera, 
-  );
+        // Future getImageFromCamera() async{
+        //   var image = await ImagePicker.pickImage(
+        //        source: ImageSource.camera, 
+        //        );
+        //   setState(() {
+        //     _image = image;
+        //     print('Image Pathssdggjhl $_image');
+        //   });
 
-  setState(() {
-    _image = image;
-    print('Image Pathssdggjhl $_image');
-  });
+        // }
 
-  }
-      Future uploadPic(BuildContext context) async{
-    String fileName = basename(_image.path);
-    firebase_storage.Reference fireBaseStorageRef= firebase_storage.FirebaseStorage.instance.ref().child("1nucdckUSJvLLa93pSZ4").child(fileName);
-   firebase_storage.UploadTask uploadTasks= fireBaseStorageRef.putFile(_image);
-   firebase_storage.TaskSnapshot taskSnapshot= await uploadTasks.whenComplete(() => null);
-   taskSnapshot.ref.getDownloadURL().then((value) => print("Done : $value"));
-  }
+  
+  // Future uploadPic(BuildContext context) async{
+  //     String fileName = basename(_image.path);
+  //     photosReference= firebase_storage.FirebaseStorage.instance.ref().child("ProfilePhotos").child("1nucdckUSJvLLa93pSZ4");
+  //     firebase_storage.UploadTask uploadTasks= photosReference.putFile(_image);
+  //     firebase_storage.TaskSnapshot taskSnapshot= await uploadTasks.whenComplete(() => null);
+  //     taskSnapshot.ref.getDownloadURL().then((value) => print("Done : $value"));
+  // }
     return new FutureBuilder(
       future:firestoreInstance.collection('UserProfile').doc("1nucdckUSJvLLa93pSZ4").get(),
     builder: (context, snapshot) {
       if (snapshot.hasData) {
-      
       name=TextEditingController(text:snapshot.data["firstName"]+snapshot.data["lastName"]);
       email=TextEditingController(text:snapshot.data["emailId"]);
       mobileNo=TextEditingController(text:snapshot.data["mobileNumber"]);
@@ -77,10 +103,10 @@ class _EditProfile extends State<EditProfile> {
                         child: new SizedBox(
                            width: MediaQuery.of(context).size.width,           
                            height: MediaQuery.of(context).size.height/5,
-                          child: (_image!=null)?Image.file(
+                           child: (_image!=null)?Image.file(
                             _image,
                             fit: BoxFit.fill,
-                          ):Image(image: AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,),
+                          ):Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,)
                         ),
                       ),
                     ),
@@ -97,15 +123,7 @@ class _EditProfile extends State<EditProfile> {
                     color:Colors.black12
                     ),
                     color: Colors.grey[700] ),
-                child: IconButton(
-                  icon:Icon(Icons.camera_enhance_rounded,
-                  color: Colors.black,),
-                  onPressed: () {
-                    getImageFromCamera();
-                                    
-                                  
-                  } ,
-                  ),
+                child: cameraak()
                 ))
               ],)),
              Column(
@@ -218,16 +236,16 @@ class _EditProfile extends State<EditProfile> {
                                   fontSize: 14, fontWeight: FontWeight.w400),
                             ),
                             onPressed: () {
-                               uploadPic(context);
-                              // if (editFormKey.currentState.validate()) {
-                              // Navigator.push(
-                              //       context,
-                              //       MaterialPageRoute(
-                              //         builder: (context) => new SuccessTick(),
-                              //       ),
-                              //     );
+                               cameraa.uploadPic(context,"ProfilePhotos","1nucdckUSJvLLa93pSZ4");
+                              
+                              Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => new My_Donation(),
+                                    ),
+                                  );
                                 
-                              // }
+                              
                             })),
                     ] )
       ])
@@ -236,5 +254,22 @@ class _EditProfile extends State<EditProfile> {
     else
     return CircularProgressIndicator();
     });
+  }
+  Widget cameraak() {
+    return FutureBuilder(future:cameraa.getImageFromCamera(),builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return IconButton(
+                  icon:Icon(Icons.camera_enhance_rounded,
+                  color: Colors.black,),
+                  onPressed: () {
+                    setState(()  {
+                       {this._image=snapshot.data;} 
+                    });
+                                   
+                  } ,
+                  );
+      }else{
+        return CircularProgressIndicator();
+      }});
   }
 }
