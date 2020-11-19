@@ -1,9 +1,11 @@
+import 'package:crowd_funding/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class TextFField extends StatelessWidget {
   String lableTextField;
   String hintTextField;
+  String initvalue;
   final myController;
   bool obscureTexts; 
   Function validInput;
@@ -14,6 +16,7 @@ class TextFField extends StatelessWidget {
   int minLine;
   TextFField(
       {this.lableTextField,
+      this.initvalue,
       this.hintTextField,
       this.suffixIcons,
       this.myController,
@@ -26,6 +29,7 @@ class TextFField extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue:this.initvalue ,
       //autofocus:true,
       keyboardType: this.aTextInputType,
       maxLines: this.maxLine,
@@ -83,4 +87,5 @@ class TextFField extends StatelessWidget {
       validator:validInput
     );
   }
+  
 }

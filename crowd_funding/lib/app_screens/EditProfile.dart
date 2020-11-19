@@ -1,15 +1,14 @@
-import 'dart:typed_data';
 import 'package:crowd_funding/app_screens/My_Donation.dart';
+import 'package:crowd_funding/app_screens/downloadImage.dart';
 import 'package:flutter/material.dart';
 import 'TextFField.dart';
 import 'cameraImageUpload.dart';
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:path/path.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
 import 'package:crowd_funding/common/successTick.dart';
-import 'My_Donation.dart';
+import 'package:crowd_funding/model/User.dart';
 class EditProfile extends StatefulWidget {
   
   @override
@@ -18,65 +17,48 @@ class EditProfile extends StatefulWidget {
   }
 }
 class _EditProfile extends State<EditProfile> {
-   File _image;
-  // Uint8List imageFile;
+  File _image;
+  Image imagePath;
+  String nameEdit;
+  String emailEdit;
+  String mobileNoEdit;
   final editFormKey = GlobalKey<FormState>();
   TextEditingController name;
   TextEditingController email;
   TextEditingController mobileNo;
   final firestoreInstance = FirebaseFirestore.instance;
   cameraImageUpload cameraa= new cameraImageUpload();
-  //firebase_storage.Reference photosReference = firebase_storage.FirebaseStorage.instance.ref().child("ProfilePhotos");
-  //   Future getProfileImage() async{
-  //   int maxSize=7*1024*1024;
-  //   await photosReference.child("1nucdckUSJvLLa93pSZ4.jpg").getData(maxSize).then((data) {
-  //     imageFile=data;
-  //   }).catchError((error){
-
-  //   });
-  // }
-  // Widget decideProfileImage(){
-  //   if(imageFile==null){
-  //     return Image(image: AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
-  //   }
-  //   else{
-  //     return Image.memory(imageFile,fit: BoxFit.fill,);
-  //   }}
-  // @override
-  // void initState(){
-  //   super.initState();
-  //   getProfileImage();
-  // }
-  @override
-  Widget build(BuildContext context) {
-        Future getImageFromCamera() async{
-          var image = await ImagePicker.pickImage(
-               source: ImageSource.camera, 
-               );
-          setState(() {
-            _image = image;
-            print('Image Pathssdggjhl $_image');
-          });
-
-        }
+  downloadImage download = new downloadImage();
+  final picker = ImagePicker();
 
   
-  // Future uploadPic(BuildContext context) async{
-  //     String fileName = basename(_image.path);
-  //     photosReference= firebase_storage.FirebaseStorage.instance.ref().child("ProfilePhotos").child("1nucdckUSJvLLa93pSZ4");
-  //     firebase_storage.UploadTask uploadTasks= photosReference.putFile(_image);
-  //     firebase_storage.TaskSnapshot taskSnapshot= await uploadTasks.whenComplete(() => null);
-  //     taskSnapshot.ref.getDownloadURL().then((value) => print("Done : $value"));
-  // }
+
+  User aUser = new User();
+  Future getImageFromCamera() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+ 
+  @override
+  void initState() {
+    super.initState();
+    
+  }
+  @override
+  Widget build(BuildContext context) {
+  
     return new FutureBuilder(
-      future:firestoreInstance.collection('UserProfile').doc("1nucdckUSJvLLa93pSZ4").get(),
+      future:retieveProfile(),
     builder: (context, snapshot) {
       if (snapshot.hasData) {
-      name=TextEditingController(text:snapshot.data["firstName"]+snapshot.data["lastName"]);
-      email=TextEditingController(text:snapshot.data["emailId"]);
-      mobileNo=TextEditingController(text:snapshot.data["mobileNumber"]);
-    
-       return Scaffold(
+     return Scaffold(
       appBar: new AppBar(
         backgroundColor: Theme.of(context).appBarTheme.color,
         iconTheme: Theme.of(context).iconTheme,
@@ -149,8 +131,13 @@ class _EditProfile extends State<EditProfile> {
                                  color: Theme.of(context).iconTheme.color,
                                  size: 30,
                              ),
+                             onPressed: (){
+                               setState(() {
+                                 myController:this.name;
+                               });
+                             },
                              ),
-                             myController:name,
+                             initvalue:nameEdit,
                           obscureTexts: false,
                           aTextInputType: TextInputType.name,
                           maxLenthOfTextField: null,
@@ -177,8 +164,14 @@ class _EditProfile extends State<EditProfile> {
                                  Icons.edit,
                                  color: Theme.of(context).iconTheme.color,
                                  size: 30,
-                             )),
-                             myController: email,
+                             ),
+                             onPressed: (){
+                               setState(() {
+                                 myController:this.email;
+                               });
+                             },
+                             ),
+                             initvalue: emailEdit,
                           obscureTexts: false,
                           aTextInputType: TextInputType.emailAddress,
                           maxLenthOfTextField: null,
@@ -209,6 +202,11 @@ class _EditProfile extends State<EditProfile> {
                                  color: Theme.of(context).iconTheme.color,
                                  size: 30,
                              ),
+                             onPressed: (){
+                               setState(() {
+                                 myController:this.mobileNo;
+                               });
+                             },
                                 ),
                           obscureTexts: false,
                           aTextInputType: TextInputType.number,
@@ -224,7 +222,7 @@ class _EditProfile extends State<EditProfile> {
                             lableTextField: "Mobile Number",
                             hintTextField: "Enter Mobile Number",
                            
-                        myController: mobileNo
+                        initvalue: mobileNoEdit
                         )),
                         SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -244,13 +242,19 @@ class _EditProfile extends State<EditProfile> {
                             ),
                             onPressed: () {
                                cameraa.uploadPic(context,_image,"ProfilePhotos","1nucdckUSJvLLa93pSZ4");
-                              
-                              Navigator.push(
+                              if (editFormKey.currentState.validate()) {
+                                this.setUserDetail();
+                                this.firestoreInstance.collection("UserProfile").doc("1nucdckUSJvLLa93pSZ4")
+                                    .update(this.aUser.toJson())
+                                    .then((value) {
+                                  Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => new My_Donation(),
+                                      builder: (context) => new SuccessTick(),
                                     ),
-                                  );}
+                                  );
+                                });
+                              }}
                         ))
                               
                     ] )
@@ -261,5 +265,40 @@ class _EditProfile extends State<EditProfile> {
     return CircularProgressIndicator();
     });
   }
+  void setUserDetail() {
+    var names=this.name.text.split(" ");
+    this.aUser.firstName = names[0];
+    this.aUser.lastName = names[1];
+    this.aUser.mobileNumber = this.mobileNo.text;
+    this.aUser.emailId = this.email.text;
+  
+  }
 
+  @override
+  void dispose() {
+    this.name.dispose();
+    this.mobileNo.dispose();
+    this.email.dispose();
+    super.dispose();
+  }
+Future<bool> retieveProfile() async {
+    await firestoreInstance.collection('UserProfile').doc("1nucdckUSJvLLa93pSZ4").get().then((value) {
+      this.nameEdit=value["firstName"]+value["lastName"];
+      this.emailEdit=value["emailId"];
+      this.mobileNoEdit=value["mobileNumber"];
+      download.getProfileImage("ProfilePhotos","1nucdckUSJvLLa93pSZ4").then((value1) {
+          if(value1 != null){
+        imagePath=Image.network(value1,fit: BoxFit.fill,);
+       return Future( (){return true;}) ;
+
+       
+    }
+    else{
+      imagePath=Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
+      return Future( (){return true;}) ;
+    }
+      });
+    
+    });
+  }
 }
