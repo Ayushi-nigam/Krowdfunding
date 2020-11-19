@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 
-import 'app_screens/MyFundraise.dart';
+import 'app_screens/Logo.dart';
 
 bool USE_FIRESTORE_EMULATOR = false;
 void main() async {
@@ -22,15 +22,17 @@ class CrowdfundApp extends StatelessWidget {
           primaryColorLight: Color(0xffCFD8DC),
           focusColor: Color(0xffCFD8DC),
           primaryColor: Color(0xffCFD8DC),
+          disabledColor: Colors.white54,
+          errorColor: Colors.red[600],
           appBarTheme: new AppBarTheme(
-            color: new Color(0xff718792),
+            color: new Color(0xff455A64),
           ),
           iconTheme: new IconThemeData(color: Colors.white),
           textTheme: TextTheme(bodyText1: TextStyle(color: Color(0xffFFFFFF))),
           buttonColor: Color(0xffEA8724),
           scaffoldBackgroundColor: Color(0xff607D8B)),
       title: "Crowd Funding",
-      home: new MyFundraise(),
+      home: new Logo(),
     );
   }
 }
