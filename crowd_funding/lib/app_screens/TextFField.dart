@@ -8,6 +8,7 @@ class TextFField extends StatelessWidget {
   String initvalue;
   final myController;
   bool obscureTexts; 
+  Function change;
   Function validInput;
   IconButton suffixIcons;
   TextInputType aTextInputType;
@@ -25,6 +26,7 @@ class TextFField extends StatelessWidget {
       this.minLine,
       this.maxLenthOfTextField,
       this.obscureTexts,
+      this.change,
       this.validInput});
 
   Widget build(BuildContext context) {

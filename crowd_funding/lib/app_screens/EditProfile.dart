@@ -1,3 +1,4 @@
+import 'package:crowd_funding/app_screens/Dashboard.dart';
 import 'package:crowd_funding/app_screens/My_Donation.dart';
 import 'package:crowd_funding/app_screens/downloadImage.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +24,9 @@ class _EditProfile extends State<EditProfile> {
   String emailEdit;
   String mobileNoEdit;
   final editFormKey = GlobalKey<FormState>();
-  TextEditingController name;
-  TextEditingController email;
-  TextEditingController mobileNo;
+  TextEditingController name = TextEditingController();
+  TextEditingController mobileNo = TextEditingController();
+  TextEditingController email = TextEditingController();
   final firestoreInstance = FirebaseFirestore.instance;
   cameraImageUpload cameraa= new cameraImageUpload();
   downloadImage download = new downloadImage();
@@ -45,19 +46,25 @@ class _EditProfile extends State<EditProfile> {
       }
     });
   }
- 
+  
   @override
   void initState() {
     super.initState();
-    
+    retrieveProfilePhoto() ;
   }
   @override
   Widget build(BuildContext context) {
   
     return new FutureBuilder(
-      future:retieveProfile(),
+      future: firestoreInstance.collection('UserProfile').doc("1nucdckUSJvLLa93pSZ4").get(),
     builder: (context, snapshot) {
       if (snapshot.hasData) {
+        print("fhhjg");
+        print(snapshot.data["emailId"]);
+         name=TextEditingController(text:snapshot.data["firstName"]+snapshot.data["lastName"]);
+      email=TextEditingController(text:snapshot.data["emailId"]);
+      mobileNo=TextEditingController(text:snapshot.data["mobileNumber"]);
+      
      return Scaffold(
       appBar: new AppBar(
         backgroundColor: Theme.of(context).appBarTheme.color,
@@ -88,7 +95,7 @@ class _EditProfile extends State<EditProfile> {
                            child: (_image!=null)?Image.file(
                             _image,
                             fit: BoxFit.fill,
-                          ):Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,)
+                          ):imagePath
                         ),
                       ),
                     ),
@@ -131,20 +138,16 @@ class _EditProfile extends State<EditProfile> {
                                  color: Theme.of(context).iconTheme.color,
                                  size: 30,
                              ),
-                             onPressed: (){
-                               setState(() {
-                                 myController:this.name;
-                               });
-                             },
+                             onPressed: null,
                              ),
-                             initvalue:nameEdit,
+                            // initvalue: name,
                           obscureTexts: false,
                           aTextInputType: TextInputType.name,
                           maxLenthOfTextField: null,
                          // validInput: RegExp(r'[a-zA-Z]'),
                           lableTextField: "Full Name",
                           hintTextField: "Enter Full Name",
-                          //myController: this.firstName,
+                          myController:this.name,
                           validInput:(value){
                                if (value.isEmpty) {
                                   return "Please Enter Full Name";
@@ -165,13 +168,10 @@ class _EditProfile extends State<EditProfile> {
                                  color: Theme.of(context).iconTheme.color,
                                  size: 30,
                              ),
-                             onPressed: (){
-                               setState(() {
-                                 myController:this.email;
-                               });
-                             },
+                             onPressed: null,
                              ),
-                             initvalue: emailEdit,
+                            //initvalue: emailEdit,
+                             myController:this.email,
                           obscureTexts: false,
                           aTextInputType: TextInputType.emailAddress,
                           maxLenthOfTextField: null,
@@ -187,7 +187,7 @@ class _EditProfile extends State<EditProfile> {
                           },
                           lableTextField: "Email Id",
                           hintTextField: "Enter The Email Id",
-                          //myController: this.emailId
+                    
                           ),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
@@ -202,11 +202,7 @@ class _EditProfile extends State<EditProfile> {
                                  color: Theme.of(context).iconTheme.color,
                                  size: 30,
                              ),
-                             onPressed: (){
-                               setState(() {
-                                 myController:this.mobileNo;
-                               });
-                             },
+                             onPressed: null,
                                 ),
                           obscureTexts: false,
                           aTextInputType: TextInputType.number,
@@ -221,8 +217,8 @@ class _EditProfile extends State<EditProfile> {
   
                             lableTextField: "Mobile Number",
                             hintTextField: "Enter Mobile Number",
-                           
-                        initvalue: mobileNoEdit
+                           myController:this.mobileNo,
+                        //initvalue: mobileNoEdit,
                         )),
                         SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -250,12 +246,12 @@ class _EditProfile extends State<EditProfile> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => new SuccessTick(),
+                                      builder: (context) => new My_Donation(),
                                     ),
                                   );
                                 });
                               }}
-                        ))
+                            ))
                               
                     ] )
       ])
@@ -266,12 +262,13 @@ class _EditProfile extends State<EditProfile> {
     });
   }
   void setUserDetail() {
-    var names=this.name.text.split(" ");
+    var names=this.name.toString().split(" ");
     this.aUser.firstName = names[0];
     this.aUser.lastName = names[1];
-    this.aUser.mobileNumber = this.mobileNo.text;
-    this.aUser.emailId = this.email.text;
-  
+    this.aUser.mobileNumber = this.mobileNo.toString();
+    this.aUser.emailId = this.email.toString();
+   print(name);
+   
   }
 
   @override
@@ -281,24 +278,14 @@ class _EditProfile extends State<EditProfile> {
     this.email.dispose();
     super.dispose();
   }
-Future<bool> retieveProfile() async {
-    await firestoreInstance.collection('UserProfile').doc("1nucdckUSJvLLa93pSZ4").get().then((value) {
-      this.nameEdit=value["firstName"]+value["lastName"];
-      this.emailEdit=value["emailId"];
-      this.mobileNoEdit=value["mobileNumber"];
-      download.getProfileImage("ProfilePhotos","1nucdckUSJvLLa93pSZ4").then((value1) {
+ retrieveProfilePhoto()  {
+   download.getProfileImage("ProfilePhotos","1nucdckUSJvLLa93pSZ4").then((value1) {
           if(value1 != null){
         imagePath=Image.network(value1,fit: BoxFit.fill,);
-       return Future( (){return true;}) ;
-
-       
     }
     else{
       imagePath=Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
-      return Future( (){return true;}) ;
     }
       });
-    
-    });
   }
 }
