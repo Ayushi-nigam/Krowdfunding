@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crowd_funding/app_screens/TextFField.dart';
-import 'package:crowd_funding/common/CameraApp.dart';
 import 'package:crowd_funding/common/FileStorage.dart';
 import 'package:crowd_funding/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:image_picker/image_picker.dart';
 
 class MyFundraise extends StatefulWidget {
   @override
@@ -24,21 +24,46 @@ class MyFundraiseState extends State<MyFundraise> {
   String selectedValueResidence;
   CollectionReference firebaseUsers =
       FirebaseFirestore.instance.collection('UserProfile');
-  List<RadioModel> sampleData = new List<RadioModel>();
 
-  List<String> path = new List<String>();
+  Set<String> path = new Set<String>();
   FileStorage aFileStorage = new FileStorage();
+
+  PickedFile _imageFile;
+  dynamic _pickImageError;
+  String _retrieveDataError;
+  final ImagePicker _picker = ImagePicker();
+  int imageCount;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  void _onImageButtonPressed(ImageSource source, {BuildContext context}) async {
+    try {
+      final pickedFile = await _picker.getImage(
+        source: source,
+        maxWidth: MediaQuery.of(context).size.width -
+            MediaQuery.of(context).size.width / 2,
+        maxHeight: MediaQuery.of(context).size.height -
+            MediaQuery.of(context).size.height / 2,
+        imageQuality: 100,
+      );
+      setState(() async {
+        _imageFile = pickedFile;
+        FileStorage aFileStorage = new FileStorage();
+        aFileStorage.uploadFile(new File(_imageFile.path), 'akash',
+            'document' + (this.imageCount + 1).toString());
+      });
+    } catch (e) {
+      setState(() {
+        _pickImageError = e;
+      });
+    }
+  }
+
   @override
   void initState() {
     items.add(DropdownMenuItem(
       child: Text("Bhopal"),
       value: "Bhopal",
     ));
-    sampleData.add(new RadioModel(true, 'english'));
-    sampleData.add(new RadioModel(false, 'hindi'));
-    sampleData.add(new RadioModel(false, 'marathi'));
-    sampleData.add(new RadioModel(false, 'odiya'));
-    sampleData.add(new RadioModel(false, 'bengali'));
   }
 
   next() {
@@ -290,17 +315,21 @@ class MyFundraiseState extends State<MyFundraise> {
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 3),
-                            itemCount: sampleData.length,
+                            itemCount: this.path.length,
                             itemBuilder: (context, index) {
                               return new InkWell(
                                   onTap: () {
                                     setState(() {
-                                      sampleData.forEach((element) =>
-                                          element.isSelected = false);
-                                      sampleData[index].isSelected = true;
+                                      if (this.path.elementAt(index) != '') {
+                                      } else {
+                                        Scaffold.of(context).showSnackBar(
+                                            SnackBar(
+                                                content: Text('No Image')));
+                                      }
                                     });
                                   },
-                                  child: new RadioItem(this.path[index]));
+                                  child: new RadioItem(
+                                      this.path.elementAt(index)));
                             },
                           ),
                         ),
@@ -317,12 +346,41 @@ class MyFundraiseState extends State<MyFundraise> {
                                     height: 56,
                                     child: Icon(Icons.add)),
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => new CameraApp(),
-                                    ),
-                                  );
+                                  _scaffoldKey.currentState
+                                      .showSnackBar(SnackBar(
+                                          duration: new Duration(seconds: 10),
+                                          content: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: <Widget>[
+                                              Semantics(
+                                                label:
+                                                    'image_picker_example_from_gallery',
+                                                child: new RaisedButton(
+                                                  onPressed: () {
+                                                    _onImageButtonPressed(
+                                                        ImageSource.gallery,
+                                                        context: context);
+                                                  },
+                                                  child: const Icon(
+                                                      Icons.photo_library),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 16.0),
+                                                child: new RaisedButton(
+                                                  onPressed: () {
+                                                    _onImageButtonPressed(
+                                                        ImageSource.camera,
+                                                        context: context);
+                                                  },
+                                                  child: const Icon(
+                                                      Icons.camera_alt),
+                                                ),
+                                              ),
+                                            ],
+                                          )));
                                 },
                               ),
                             ),
@@ -340,28 +398,33 @@ class MyFundraiseState extends State<MyFundraise> {
   }
 
   List<Step> steps;
-  Future<List<String>> downloadDocument() async {
+  Future<Set<String>> downloadDocument() async {
     List<String> apathList = List<String>();
-    for (var i = 0; i < 6; i++) {
-      String apath = await aFileStorage.downloadFile(firebase_storage
-          .FirebaseStorage.instance
-          .ref()
-          .child('akash')
-          .child("image")
-          .child('document' + (i + 1).toString()));
+    //for (var i = 0; i < 6; i++) {
+    apathList = await aFileStorage.downloadFile(firebase_storage
+        .FirebaseStorage.instance
+        .ref()
+        .child('akash')
+        .child("image"));
+    // .child('document' + (i + 1).toString()));
 
-      if (apath != null) {
-        apathList.add(apath);
-      } else {
-        apathList.add('');
-      }
-    }
-    return apathList;
+    // if (apath != null) {
+    //   apathList.add(apath);
+    // } else {
+    //   apathList.add('');
+    // }
+    // }
+    this.imageCount = apathList.length;
+    //this.path.add(_imageFile.path);
+    //apathList.add(_imageFile.path);
+    return apathList.toSet();
+    ;
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+        key: _scaffoldKey,
         appBar: new AppBar(
           title: new Text("Fundraise"),
         ),
@@ -388,7 +451,6 @@ class RadioItem extends StatelessWidget {
   RadioItem(this._item);
   @override
   Widget build(BuildContext context) {
-    print(this._item + 'Akash');
     return new Container(
       margin: new EdgeInsets.all(15.0),
       child: new Row(
@@ -398,10 +460,12 @@ class RadioItem extends StatelessWidget {
             height: 200,
           ),
           new Container(
-            child: Image.file(
-              new File(this._item),
-              fit: BoxFit.fill,
-            ),
+            child: this._item != ''
+                ? Image.file(
+                    new File(this._item),
+                    fit: BoxFit.fill,
+                  )
+                : new Icon(Icons.add),
             width: MediaQuery.of(context).size.width / 6,
             height: MediaQuery.of(context).size.width / 2,
             decoration: BoxDecoration(
