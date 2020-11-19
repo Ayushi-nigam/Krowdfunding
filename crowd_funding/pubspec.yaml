@@ -55,7 +55,7 @@ flutter:
   assets:
     # - images/a_dot_burr.jpeg
     # - images/a_dot_ham.jpeg
-    #- assets/Images/profile.png
+    - assets/Images/profile.png
     - assets/Images/baseline_account_box_black_18dp.png
     # - assets/riv/sucessCheck.flr
 
