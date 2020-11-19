@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:crowd_funding/app_screens/My_Donation.dart';
 import 'package:flutter/material.dart';
 import 'TextFField.dart';
-import 'camera.dart';
+import 'cameraImageUpload.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,7 +25,7 @@ class _EditProfile extends State<EditProfile> {
   TextEditingController email;
   TextEditingController mobileNo;
   final firestoreInstance = FirebaseFirestore.instance;
-  camera cameraa= new camera();
+  cameraImageUpload cameraa= new cameraImageUpload();
   //firebase_storage.Reference photosReference = firebase_storage.FirebaseStorage.instance.ref().child("ProfilePhotos");
   //   Future getProfileImage() async{
   //   int maxSize=7*1024*1024;
@@ -49,16 +49,16 @@ class _EditProfile extends State<EditProfile> {
   // }
   @override
   Widget build(BuildContext context) {
-        // Future getImageFromCamera() async{
-        //   var image = await ImagePicker.pickImage(
-        //        source: ImageSource.camera, 
-        //        );
-        //   setState(() {
-        //     _image = image;
-        //     print('Image Pathssdggjhl $_image');
-        //   });
+        Future getImageFromCamera() async{
+          var image = await ImagePicker.pickImage(
+               source: ImageSource.camera, 
+               );
+          setState(() {
+            _image = image;
+            print('Image Pathssdggjhl $_image');
+          });
 
-        // }
+        }
 
   
   // Future uploadPic(BuildContext context) async{
@@ -123,7 +123,14 @@ class _EditProfile extends State<EditProfile> {
                     color:Colors.black12
                     ),
                     color: Colors.grey[700] ),
-                child: cameraak()
+                    child:IconButton(
+                  icon:Icon(Icons.add_a_photo,
+                  color: Colors.black,),
+                  onPressed: () {
+                    getImageFromCamera();
+                                   
+                  } ,
+                  )
                 ))
               ],)),
              Column(
@@ -236,17 +243,16 @@ class _EditProfile extends State<EditProfile> {
                                   fontSize: 14, fontWeight: FontWeight.w400),
                             ),
                             onPressed: () {
-                               cameraa.uploadPic(context,"ProfilePhotos","1nucdckUSJvLLa93pSZ4");
+                               cameraa.uploadPic(context,_image,"ProfilePhotos","1nucdckUSJvLLa93pSZ4");
                               
                               Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => new My_Donation(),
                                     ),
-                                  );
-                                
+                                  );}
+                        ))
                               
-                            })),
                     ] )
       ])
             ))
@@ -255,21 +261,5 @@ class _EditProfile extends State<EditProfile> {
     return CircularProgressIndicator();
     });
   }
-  Widget cameraak() {
-    return FutureBuilder(future:cameraa.getImageFromCamera(),builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        return IconButton(
-                  icon:Icon(Icons.camera_enhance_rounded,
-                  color: Colors.black,),
-                  onPressed: () {
-                    setState(()  {
-                       {this._image=snapshot.data;} 
-                    });
-                                   
-                  } ,
-                  );
-      }else{
-        return CircularProgressIndicator();
-      }});
-  }
+
 }

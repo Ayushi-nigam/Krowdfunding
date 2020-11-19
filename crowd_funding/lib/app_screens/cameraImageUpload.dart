@@ -5,21 +5,21 @@ import 'package:crowd_funding/common/FileStorage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
-class camera{
-   File _image;
-  Future getImageFromCamera()async{
-     var image = await ImagePicker.pickImage(
-    source: ImageSource.camera, );
-    _image=image;
-    return  _image;
-  }
+class cameraImageUpload{
+   //File _image;
+  // Future getImageFromCamera()async{
+  //    var image = await ImagePicker.pickImage(
+  //   source: ImageSource.camera, );
+  //   _image=image;
+  //   return  _image;
+  // }
   
 //  @override
 //   Widget build(BuildContext context) {
      
   //FileStorage aFileStorage = new FileStorage();
   
-  Future uploadPic(BuildContext context,String FolderName,String docId) async{
+  Future uploadPic(BuildContext context,File _image,String FolderName,String docId) async{
     String fileName = basename(_image.path);
     firebase_storage.Reference fireBaseStorageRef= firebase_storage.FirebaseStorage.instance.ref().child(FolderName).child(docId);
    firebase_storage.UploadTask uploadTasks= fireBaseStorageRef.putFile(_image);
