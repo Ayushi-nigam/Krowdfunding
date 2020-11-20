@@ -17,13 +17,12 @@ class FileStorage {
 
   /// The user selects a file, and the task is added to the list.
   firebase_storage.UploadTask uploadFile(
-      File file, String userId, String docName) {
+      File file, String userId, String folderName) {
     // Create a Reference to the file
     firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
         .ref()
         .child(userId)
-        .child("image")
-        .child(docName);
+        .child(folderName);
 
     return ref.putFile(file);
   }

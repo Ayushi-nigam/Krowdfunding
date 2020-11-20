@@ -405,23 +405,12 @@ class MyFundraiseState extends State<MyFundraise> {
   List<Step> steps;
   Future<Set<String>> downloadDocument() async {
     List<String> apathList = List<String>();
-    //for (var i = 0; i < 6; i++) {
     apathList = await aFileStorage.downloadFile(firebase_storage
         .FirebaseStorage.instance
         .ref()
         .child('akash')
         .child("image"));
-    // .child('document' + (i + 1).toString()));
-
-    // if (apath != null) {
-    //   apathList.add(apath);
-    // } else {
-    //   apathList.add('');
-    // }
-    // }
     this.imageCount = apathList.length;
-    //this.path.add(_imageFile.path);
-    //apathList.add(_imageFile.path);
     return apathList.toSet();
     ;
   }

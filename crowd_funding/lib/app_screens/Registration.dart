@@ -57,7 +57,6 @@ class _RegistrartionForm extends State<Registration> {
                            obscureTexts: false,
                           aTextInputType: TextInputType.name,
                           maxLenthOfTextField: null,
-                         // validInput: RegExp(r'[a-zA-Z]'),
                           lableTextField: "First Name",
                           hintTextField: "Enter The First Name",
                           myController: this.firstName,
@@ -78,7 +77,6 @@ class _RegistrartionForm extends State<Registration> {
                         obscureTexts: false,
                           aTextInputType: TextInputType.name,
                           maxLenthOfTextField: null,
-                          //validInput: RegExp(r'[a-zA-Z]'),
                             lableTextField: "Last Name",
                             hintTextField: "Enter The Last Name",
                            validInput:(value){
@@ -142,7 +140,6 @@ class _RegistrartionForm extends State<Registration> {
                           obscureTexts: !_showPassword,
                             aTextInputType: TextInputType.visiblePassword,
                             maxLenthOfTextField: 15,
-                            //validInput: RegExp(r'[a-zA-Z0-9@#$%&*^]'),
                             lableTextField: "Enter Password",
                             hintTextField: "Enter your password",
                             validInput:(value){
@@ -179,7 +176,6 @@ class _RegistrartionForm extends State<Registration> {
                             maxLine: 1,
                             aTextInputType: TextInputType.visiblePassword,
                             maxLenthOfTextField: 15,
-                           // validInput: RegExp(r'[a-zA-Z0-9@#$%&*^]'),
                             lableTextField: "Enter Re-Password",
                             hintTextField: "Enter your Re-Password",
                             validInput:(value){
@@ -229,9 +225,7 @@ class _RegistrartionForm extends State<Registration> {
                                 signUp(this.emailId.text, this.password.text,  context).then((value) {
                                    if(value != null){
                                      userId=value.uid;
-                                     print("yhttjujjioooooooo");
-                                     print(userId);
-                                   }
+                                    }
                                 });
                                
                                 this.setUserDetail();

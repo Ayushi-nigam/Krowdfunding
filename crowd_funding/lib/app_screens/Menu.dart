@@ -49,11 +49,6 @@ class Menu extends StatelessWidget {
                                 }
                                 else return Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
                               }
-
-                          //  (_image!=null)?Image.file(
-                          //   _image,
-                          //   fit: BoxFit.fill,
-                          // ):imagePath
                         ),
                     ),
                     new Container(
@@ -191,18 +186,4 @@ class Menu extends StatelessWidget {
       }
     });
   }
-    
-  // retrieveProfilePhoto()  {
-  //  download.getProfileImage("ProfilePhotos",uid).then((value1) {
-  //         if(value1 != null){
-  //       imagePath=Image.network(value1,fit: BoxFit.fill,);
-  //       print("ProfilePhoto");
-  //   }
-  //   else{
-  //     imagePath=Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
-  //   }
-  //     });
-  //     }
-    
-  
 }
