@@ -5,7 +5,6 @@ import 'package:crowd_funding/app_screens/FundraiseList.dart';
 import 'package:crowd_funding/app_screens/TextFField.dart';
 import 'package:crowd_funding/common/FileStorage.dart';
 import 'package:crowd_funding/model/EventModel.dart';
-import 'package:crowd_funding/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
