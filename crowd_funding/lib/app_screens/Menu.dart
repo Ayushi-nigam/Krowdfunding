@@ -25,12 +25,13 @@ class Menu extends StatelessWidget {
                     SizedBox(
                       width: MediaQuery.of(context).size.width -
                           MediaQuery.of(context).size.width / 1.3,
-                      height: MediaQuery.of(context).size.height/5,
-                      child: Image(image: AssetImage('assets/Images/profile.png')),
+                      height: MediaQuery.of(context).size.height / 5,
+                      child:
+                          Image(image: AssetImage('assets/Images/profile.png')),
                     ),
                     new Container(
                         margin: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.width/8),
+                            top: MediaQuery.of(context).size.width / 8),
                         child: new Column(children: <Widget>[
                           Text("Akash Nigam",
                               style: TextStyle(
@@ -67,7 +68,8 @@ class Menu extends StatelessWidget {
                         ]))
                   ],
                 )),
-                decoration: new BoxDecoration(color: Theme.of(context).appBarTheme.color),
+                decoration: new BoxDecoration(
+                    color: Theme.of(context).appBarTheme.color),
               ),
               new ListTile(
                 leading: Icon(FontAwesomeIcons.moneyBillAlt),
@@ -158,4 +160,3 @@ class Menu extends StatelessWidget {
     );
   }
 }
-
