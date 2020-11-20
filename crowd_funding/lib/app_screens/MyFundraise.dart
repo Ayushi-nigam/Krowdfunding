@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crowd_funding/app_screens/FundraiseList.dart';
 import 'package:crowd_funding/app_screens/TextFField.dart';

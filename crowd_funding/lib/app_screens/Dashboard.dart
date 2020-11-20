@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 import 'Menu.dart';
+class Dashboard extends StatefulWidget {
+  final String uid;
 
-class Dashboard extends StatelessWidget {
+  Dashboard({Key key, @required this.uid}) : super(key: key);
+
+  @override
+  _DashboardState createState() => _DashboardState(uid);
+}
+
+class _DashboardState extends State<Dashboard> {
+  final String uid;
+  _DashboardState(this.uid);
   GlobalKey<ScaffoldState> _dashboardKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -45,7 +55,7 @@ class Dashboard extends StatelessWidget {
         ],
         elevation: 15,
       ),
-      drawer: Menu(),
+      drawer: Menu(uid),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: new Container(),
     );
