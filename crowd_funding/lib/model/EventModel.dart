@@ -7,6 +7,7 @@ class EventModel {
   String category;
   String createdDate;
   String pictureLocation;
+  String userId;
 
   EventModel() {
     ownerName = "";
@@ -17,6 +18,7 @@ class EventModel {
     category = '';
     createdDate = '';
     pictureLocation = "";
+    userId = "";
   }
   EventModel.fromJson(Map<String, dynamic> json)
       : ownerName = json['ownerName'],
@@ -25,7 +27,8 @@ class EventModel {
         campaginDays = json['campaginDays'],
         goalAmount = json['goalAmount'],
         category = json['category'],
-        createdDate = json['createdDate'];
+        createdDate = json['createdDate'],
+        userId = json['userId'];
 
   Map<String, dynamic> toJson() => {
         'ownerName': this.ownerName,
@@ -34,6 +37,7 @@ class EventModel {
         'createdDate': this.createdDate,
         'goalAmount': this.goalAmount,
         'category': this.category,
-        'campaginDays': this.campaginDays
+        'campaginDays': this.campaginDays,
+        'userId': this.userId
       };
 }
