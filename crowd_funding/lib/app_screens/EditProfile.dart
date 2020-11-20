@@ -1,15 +1,15 @@
-import 'dart:typed_data';
+import 'package:crowd_funding/app_screens/Dashboard.dart';
 import 'package:crowd_funding/app_screens/My_Donation.dart';
+import 'package:crowd_funding/app_screens/downloadImage.dart';
 import 'package:flutter/material.dart';
 import 'TextFField.dart';
 import 'cameraImageUpload.dart';
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:path/path.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
 import 'package:crowd_funding/common/successTick.dart';
-import 'My_Donation.dart';
+import 'package:crowd_funding/model/User.dart';
 class EditProfile extends StatefulWidget {
   
   @override
@@ -18,65 +18,83 @@ class EditProfile extends StatefulWidget {
   }
 }
 class _EditProfile extends State<EditProfile> {
-   File _image;
-  // Uint8List imageFile;
+  File _image;
+  int flag=0;
+  Image imagePath;
+  String nameEdit;
+  String emailEdit;
+  String mobileNoEdit;
   final editFormKey = GlobalKey<FormState>();
-  TextEditingController name;
-  TextEditingController email;
-  TextEditingController mobileNo;
+  TextEditingController name = TextEditingController();
+  TextEditingController mobileNo = TextEditingController();
+  TextEditingController email = TextEditingController();
   final firestoreInstance = FirebaseFirestore.instance;
   cameraImageUpload cameraa= new cameraImageUpload();
-  //firebase_storage.Reference photosReference = firebase_storage.FirebaseStorage.instance.ref().child("ProfilePhotos");
-  //   Future getProfileImage() async{
-  //   int maxSize=7*1024*1024;
-  //   await photosReference.child("1nucdckUSJvLLa93pSZ4.jpg").getData(maxSize).then((data) {
-  //     imageFile=data;
-  //   }).catchError((error){
-
-  //   });
-  // }
-  // Widget decideProfileImage(){
-  //   if(imageFile==null){
-  //     return Image(image: AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
-  //   }
-  //   else{
-  //     return Image.memory(imageFile,fit: BoxFit.fill,);
-  //   }}
-  // @override
-  // void initState(){
-  //   super.initState();
-  //   getProfileImage();
-  // }
-  @override
-  Widget build(BuildContext context) {
-        Future getImageFromCamera() async{
-          var image = await ImagePicker.pickImage(
-               source: ImageSource.camera, 
-               );
-          setState(() {
-            _image = image;
-            print('Image Pathssdggjhl $_image');
-          });
-
-        }
+  downloadImage download = new downloadImage();
+  final picker = ImagePicker();
 
   
-  // Future uploadPic(BuildContext context) async{
-  //     String fileName = basename(_image.path);
-  //     photosReference= firebase_storage.FirebaseStorage.instance.ref().child("ProfilePhotos").child("1nucdckUSJvLLa93pSZ4");
-  //     firebase_storage.UploadTask uploadTasks= photosReference.putFile(_image);
-  //     firebase_storage.TaskSnapshot taskSnapshot= await uploadTasks.whenComplete(() => null);
-  //     taskSnapshot.ref.getDownloadURL().then((value) => print("Done : $value"));
+
+  User aUser = new User();
+  Future getImageFromCamera() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+  // textListner(){
+  //   nameEdit=
+  //   emailEdit=email.text;
+  //   mobileNoEdit=mobileNo.text;
   // }
+  @override
+  void initState() {
+    super.initState();
+    retrieveProfilePhoto() ;
+    //mobileNo.addListener(textListner);
+    
+  }
+  @override
+  Widget build(BuildContext context) {
+  
     return new FutureBuilder(
-      future:firestoreInstance.collection('UserProfile').doc("1nucdckUSJvLLa93pSZ4").get(),
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
+      future: firestoreInstance.collection('UserProfile').doc("1nucdckUSJvLLa93pSZ4").get(),
+      builder: (context, snapshot) {
+      if (snapshot.hasData && flag==0) {
+        print("fhhjg");
+        print(snapshot.data["emailId"]);
       name=TextEditingController(text:snapshot.data["firstName"]+snapshot.data["lastName"]);
       email=TextEditingController(text:snapshot.data["emailId"]);
       mobileNo=TextEditingController(text:snapshot.data["mobileNumber"]);
-    
-       return Scaffold(
+      return mainMethod();
+      }
+    else if(flag==1){
+      print("@ndgu");
+      name=null;
+      email=null;
+      mobileNo=null;
+      return mainMethod();
+    }
+    else
+    return CircularProgressIndicator();
+    });
+  }
+  void setUserDetail() {
+    var names=this.nameEdit.split(" ");
+    this.aUser.firstName = names[0];
+    this.aUser.lastName = names[1];
+    this.aUser.mobileNumber = this.mobileNoEdit;
+    this.aUser.emailId = this.emailEdit;
+   print(emailEdit);
+   
+  }
+  Widget mainMethod (){
+         return Scaffold(
       appBar: new AppBar(
         backgroundColor: Theme.of(context).appBarTheme.color,
         iconTheme: Theme.of(context).iconTheme,
@@ -106,7 +124,7 @@ class _EditProfile extends State<EditProfile> {
                            child: (_image!=null)?Image.file(
                             _image,
                             fit: BoxFit.fill,
-                          ):Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,)
+                          ):imagePath
                         ),
                       ),
                     ),
@@ -149,22 +167,29 @@ class _EditProfile extends State<EditProfile> {
                                  color: Theme.of(context).iconTheme.color,
                                  size: 30,
                              ),
+                             onPressed: null,
                              ),
-                             myController:name,
                           obscureTexts: false,
                           aTextInputType: TextInputType.name,
                           maxLenthOfTextField: null,
-                         // validInput: RegExp(r'[a-zA-Z]'),
                           lableTextField: "Full Name",
                           hintTextField: "Enter Full Name",
-                          //myController: this.firstName,
+                          myController:this.name,
                           validInput:(value){
                                if (value.isEmpty) {
                                   return "Please Enter Full Name";
                                 }
-                                return null;
+                                return null;},
+                                change:(text){
+                                  setState(() {
+                                    nameEdit=text;
+                                 name=text;
+                                 flag=1;
+                                  });
+                                 
                           }
                           ),
+                          
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                      Container(
@@ -177,8 +202,12 @@ class _EditProfile extends State<EditProfile> {
                                  Icons.edit,
                                  color: Theme.of(context).iconTheme.color,
                                  size: 30,
-                             )),
-                             myController: email,
+                             ),
+                             onPressed: null,
+                             ),
+                            lableTextField: "Email Id",
+                          hintTextField: "Enter The Email Id",
+                           myController:this.email,
                           obscureTexts: false,
                           aTextInputType: TextInputType.emailAddress,
                           maxLenthOfTextField: null,
@@ -191,10 +220,15 @@ class _EditProfile extends State<EditProfile> {
                               if (!regex.hasMatch(value))
                                 {return 'Enter Valid Email';}
                                 return null;
-                          },
-                          lableTextField: "Email Id",
-                          hintTextField: "Enter The Email Id",
-                          //myController: this.emailId
+                           },
+                            change:(text){
+                              setState(() {
+                                emailEdit=text;
+                                 email=text;
+                                 flag=1;
+                              });
+                                 
+                          }
                           ),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
@@ -209,10 +243,14 @@ class _EditProfile extends State<EditProfile> {
                                  color: Theme.of(context).iconTheme.color,
                                  size: 30,
                              ),
+                             onPressed: null,
                                 ),
                           obscureTexts: false,
                           aTextInputType: TextInputType.number,
                           maxLenthOfTextField: 10,
+                          lableTextField: "Mobile Number",
+                            hintTextField: "Enter Mobile Number",
+                           myController:this.mobileNo,
                          validInput:(value) {
                               if (value.isEmpty) {
                                   return "Please Enter Mobile Number";
@@ -220,11 +258,14 @@ class _EditProfile extends State<EditProfile> {
                               if (value.length != 10)
                                  {return 'Mobile Number must be of 10 digit';}
                                 return null;},
-  
-                            lableTextField: "Mobile Number",
-                            hintTextField: "Enter Mobile Number",
-                           
-                        myController: mobileNo
+                                change:(text){
+                                  setState(() {
+                                    mobileNoEdit=text;
+                                 mobileNo=text;
+                                 flag=1;
+                                  });
+                                 
+                          }
                         )),
                         SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -244,22 +285,42 @@ class _EditProfile extends State<EditProfile> {
                             ),
                             onPressed: () {
                                cameraa.uploadPic(context,_image,"ProfilePhotos","1nucdckUSJvLLa93pSZ4");
-                              
-                              Navigator.push(
+                              if (editFormKey.currentState.validate()) {
+                                this.setUserDetail();
+                                this.firestoreInstance.collection("UserProfile").doc("1nucdckUSJvLLa93pSZ4")
+                                    .update(this.aUser.toJson())
+                                    .then((value) {
+                                  Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => new My_Donation(),
                                     ),
-                                  );}
-                        ))
+                                  );
+                                });
+                              }}
+                            ))
                               
                     ] )
       ])
             ))
-    );}
-    else
-    return CircularProgressIndicator();
-    });
+    );
   }
+  @override
+  void dispose() {
+    this.name.dispose();
+    this.mobileNo.dispose();
+    this.email.dispose();
+    super.dispose();
+  }
+ retrieveProfilePhoto()  {
+   download.getProfileImage("ProfilePhotos","1nucdckUSJvLLa93pSZ4").then((value1) {
+          if(value1 != null){
+        imagePath=Image.network(value1,fit: BoxFit.fill,);
+    }
+    else{
+      imagePath=Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
+    }
+      });}
+      
 
 }
