@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crowd_funding/app_screens/Login.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auths;
 import 'package:crowd_funding/common/successTick.dart';
 import 'package:crowd_funding/model/User.dart';
 import 'package:flutter/material.dart';
 import 'TextFField.dart';
-
+import 'authentication.dart';
 class Registration extends StatefulWidget {
   @override
   _RegistrartionForm createState() {
@@ -19,6 +21,7 @@ class _RegistrartionForm extends State<Registration> {
   final emailId = TextEditingController();
   final password = TextEditingController();
   final confirmPassword = TextEditingController();
+  String userId;
   bool _showPassword=false;
   bool _showRePassword=false;
   CollectionReference firebaseUsers =
@@ -223,14 +226,22 @@ class _RegistrartionForm extends State<Registration> {
                             ),
                             onPressed: () {
                               if (registrationFormKey.currentState.validate()) {
+                                signUp(this.emailId.text, this.password.text,  context).then((value) {
+                                   if(value != null){
+                                     userId=value.uid;
+                                     print("yhttjujjioooooooo");
+                                     print(userId);
+                                   }
+                                });
+                               
                                 this.setUserDetail();
-                                this.firebaseUsers
-                                    .add(this.aUser.toJson())
+                                this.firebaseUsers.doc(userId)
+                                    .set(this.aUser.toJson())
                                     .then((value) {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => new SuccessTick(),
+                                      builder: (context) => new Login(),
                                     ),
                                   );
                                 });

@@ -1,7 +1,8 @@
 import 'package:crowd_funding/app_screens/FundraiseList.dart';
-import 'package:crowd_funding/common/CameraApp.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'downloadImage.dart';
 import 'Dashboard.dart';
 import 'EditProfile.dart';
 import 'MyFundraise.dart';
@@ -10,9 +11,22 @@ import 'Help_Support.dart';
 import 'Rewards.dart';
 
 class Menu extends StatelessWidget {
+  String uid;
+  String name="UserName";
+  downloadImage download = new downloadImage();
+  Image imagePath;
+  final firestoreInstance = FirebaseFirestore.instance;
+  Menu(@required this.uid);
+  
+  
   @override
   Widget build(BuildContext context) {
-    return new Drawer(
+    return FutureBuilder(future:firestoreInstance.collection('UserProfile').doc(uid).get(),
+
+    builder: (context,snapshot){
+      if(snapshot.hasData){
+         name=snapshot.data["firstName"]+snapshot.data["lastName"];
+        return new Drawer(
       elevation: 5,
       child: new Container(
           color: Theme.of(context).focusColor,
@@ -27,14 +41,26 @@ class Menu extends StatelessWidget {
                       width: MediaQuery.of(context).size.width -
                           MediaQuery.of(context).size.width / 1.3,
                       height: MediaQuery.of(context).size.height / 5,
-                      child:
-                          Image(image: AssetImage('assets/Images/profile.png')),
+                      child:FutureBuilder(
+                              future: download.getProfileImage("ProfilePhotos", uid),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData){
+                                  return  snapshot.data;
+                                }
+                                else return Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
+                              }
+
+                          //  (_image!=null)?Image.file(
+                          //   _image,
+                          //   fit: BoxFit.fill,
+                          // ):imagePath
+                        ),
                     ),
                     new Container(
                         margin: EdgeInsets.only(
                             top: MediaQuery.of(context).size.width / 8),
                         child: new Column(children: <Widget>[
-                          Text("Akash Nigam",
+                          Text(name,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontFamily: "Roboto",
@@ -54,7 +80,7 @@ class Menu extends StatelessWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => EditProfile(),
+                                      builder: (context) => EditProfile(uid: uid,),
                                     ),
                                   );
                                 },
@@ -111,7 +137,7 @@ class Menu extends StatelessWidget {
                 ),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Dashboard()));
+                      MaterialPageRoute(builder: (context) => Dashboard(uid:uid)));
                 },
               ),
               new ListTile(
@@ -153,11 +179,30 @@ class Menu extends StatelessWidget {
                 ),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Dashboard()));
+                      MaterialPageRoute(builder: (context) => Dashboard(uid: uid,)));
                 },
               ),
             ],
           )),
     );
   }
+      else{
+        return CircularProgressIndicator();
+      }
+    });
+  }
+    
+  // retrieveProfilePhoto()  {
+  //  download.getProfileImage("ProfilePhotos",uid).then((value1) {
+  //         if(value1 != null){
+  //       imagePath=Image.network(value1,fit: BoxFit.fill,);
+  //       print("ProfilePhoto");
+  //   }
+  //   else{
+  //     imagePath=Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
+  //   }
+  //     });
+  //     }
+    
+  
 }
