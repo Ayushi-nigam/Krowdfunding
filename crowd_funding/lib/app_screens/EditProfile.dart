@@ -11,13 +11,17 @@ import 'package:image_picker/image_picker.dart';
 import 'package:crowd_funding/common/successTick.dart';
 import 'package:crowd_funding/model/User.dart';
 class EditProfile extends StatefulWidget {
-  
+   final String uid;
+
+  EditProfile({Key key, @required this.uid}) : super(key: key);
   @override
   _EditProfile createState() {
-    return _EditProfile();
+    return _EditProfile(uid);
   }
 }
 class _EditProfile extends State<EditProfile> {
+  final String uid;
+  _EditProfile(this.uid);
   File _image;
   int flag=0;
   Image imagePath;
@@ -28,6 +32,7 @@ class _EditProfile extends State<EditProfile> {
   TextEditingController name = TextEditingController();
   TextEditingController mobileNo = TextEditingController();
   TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
   final firestoreInstance = FirebaseFirestore.instance;
   cameraImageUpload cameraa= new cameraImageUpload();
   downloadImage download = new downloadImage();
@@ -55,7 +60,7 @@ class _EditProfile extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
-    retrieveProfilePhoto() ;
+    //retrieveProfilePhoto() ;
     //mobileNo.addListener(textListner);
     
   }
@@ -63,38 +68,15 @@ class _EditProfile extends State<EditProfile> {
   Widget build(BuildContext context) {
   
     return new FutureBuilder(
-      future: firestoreInstance.collection('UserProfile').doc("1nucdckUSJvLLa93pSZ4").get(),
+      future: firestoreInstance.collection('UserProfile').doc(uid).get(),
       builder: (context, snapshot) {
-      if (snapshot.hasData && flag==0) {
-        print("fhhjg");
+      if (snapshot.hasData ) {
         print(snapshot.data["emailId"]);
       name=TextEditingController(text:snapshot.data["firstName"]+snapshot.data["lastName"]);
       email=TextEditingController(text:snapshot.data["emailId"]);
       mobileNo=TextEditingController(text:snapshot.data["mobileNumber"]);
-      return mainMethod();
-      }
-    else if(flag==1){
-      print("@ndgu");
-      name=null;
-      email=null;
-      mobileNo=null;
-      return mainMethod();
-    }
-    else
-    return CircularProgressIndicator();
-    });
-  }
-  void setUserDetail() {
-    var names=this.nameEdit.split(" ");
-    this.aUser.firstName = names[0];
-    this.aUser.lastName = names[1];
-    this.aUser.mobileNumber = this.mobileNoEdit;
-    this.aUser.emailId = this.emailEdit;
-   print(emailEdit);
-   
-  }
-  Widget mainMethod (){
-         return Scaffold(
+      password=TextEditingController(text:snapshot.data["passwordr"]);
+      return  Scaffold(
       appBar: new AppBar(
         backgroundColor: Theme.of(context).appBarTheme.color,
         iconTheme: Theme.of(context).iconTheme,
@@ -124,11 +106,18 @@ class _EditProfile extends State<EditProfile> {
                            child: (_image!=null)?Image.file(
                             _image,
                             fit: BoxFit.fill,
-                          ):imagePath
+                          ):FutureBuilder(
+                             future: download.getProfileImage("ProfilePhotos", uid),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData){
+                                   return  snapshot.data;
+                                 }
+                                 else return Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
+                               }
                         ),
                       ),
                     ),
-                  ),
+                    ),),
                 Positioned(
                   bottom: 0,
                   right: MediaQuery.of(context).size.width / 3.5,
@@ -284,10 +273,10 @@ class _EditProfile extends State<EditProfile> {
                                   fontSize: 14, fontWeight: FontWeight.w400),
                             ),
                             onPressed: () {
-                               cameraa.uploadPic(context,_image,"ProfilePhotos","1nucdckUSJvLLa93pSZ4");
+                               cameraa.uploadPic(context,_image,"ProfilePhotos",uid);
                               if (editFormKey.currentState.validate()) {
                                 this.setUserDetail();
-                                this.firestoreInstance.collection("UserProfile").doc("1nucdckUSJvLLa93pSZ4")
+                                this.firestoreInstance.collection("UserProfile").doc(uid)
                                     .update(this.aUser.toJson())
                                     .then((value) {
                                   Navigator.push(
@@ -304,7 +293,23 @@ class _EditProfile extends State<EditProfile> {
       ])
             ))
     );
+      }
+    
+    else
+    return CircularProgressIndicator();
+    });
   }
+  void setUserDetail() {
+    var names=this.nameEdit.split(" ");
+    this.aUser.firstName = names[0];
+    this.aUser.lastName = names[1];
+    this.aUser.mobileNumber = this.mobileNoEdit;
+    this.aUser.emailId = this.emailEdit;
+    this.aUser.password=this.password.text;
+   print(nameEdit);
+   
+  }
+  
   @override
   void dispose() {
     this.name.dispose();
@@ -312,15 +317,15 @@ class _EditProfile extends State<EditProfile> {
     this.email.dispose();
     super.dispose();
   }
- retrieveProfilePhoto()  {
-   download.getProfileImage("ProfilePhotos","1nucdckUSJvLLa93pSZ4").then((value1) {
-          if(value1 != null){
-        imagePath=Image.network(value1,fit: BoxFit.fill,);
-    }
-    else{
-      imagePath=Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
-    }
-      });}
+//  retrieveProfilePhoto()  {
+//    download.getProfileImage("ProfilePhotos",uid).then((value1) {
+//           if(value1 != null){
+//         imagePath=Image.network(value1,fit: BoxFit.fill,);
+//     }
+//     else{
+//       imagePath=Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
+//     }
+//       });}
       
 
 }

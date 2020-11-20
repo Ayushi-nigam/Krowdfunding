@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'TextFField.dart';
 import 'Registration.dart';
 import 'Dashboard.dart';
+import 'authentication.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:firebase_auth/firebase_auth.dart' as auths;
 class Login extends StatefulWidget {
   @override
   _LoginForm createState() {
@@ -14,6 +15,9 @@ class Login extends StatefulWidget {
 class _LoginForm extends State<Login> {
   final loginFormKey = GlobalKey<FormState>();
   bool _showPassword = false;
+  final email=TextEditingController();
+  final password = TextEditingController();
+  auths.FirebaseAuth auth = auths.FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +47,7 @@ class _LoginForm extends State<Login> {
                         height: MediaQuery.of(context).size.height / 8,
                         child: TextFField(
                           obscureTexts: false,
+                          myController: email,
                           aTextInputType: TextInputType.emailAddress,
                           maxLenthOfTextField: null,
                           validInput:(value){
@@ -69,6 +74,7 @@ class _LoginForm extends State<Login> {
                         height: MediaQuery.of(context).size.height / 8,
                         child: TextFField(
                           obscureTexts: !_showPassword,
+                          myController: password,
                           aTextInputType: TextInputType.visiblePassword,
                           maxLine: 1,
                           maxLenthOfTextField: 15,
@@ -116,11 +122,15 @@ class _LoginForm extends State<Login> {
                             ),
                             onPressed: () {
                               if (loginFormKey.currentState.validate()) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Dashboard(),
-                                  ),
+                                signin(email.text, password.text, context).then((value) {
+                                  if (value != null) {
+                                        Navigator.pushReplacement(
+                                        context,
+                                          MaterialPageRoute(
+                                          builder: (context) => Dashboard(uid: value.uid),
+                                  ));
+                                }}
+                               
                                 );
                                 Scaffold.of(context).showSnackBar(
                                     SnackBar(content: Text('Processing Data')));
@@ -144,7 +154,13 @@ class _LoginForm extends State<Login> {
                       height: MediaQuery.of(context).size.height / 15,
                       child: RaisedButton(
                           color: Colors.blue,
-                          onPressed: () {},
+                          onPressed: () {
+                            googleSignIn().whenComplete(() async {
+                  auths.User user = await auth.currentUser;
+                   Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => Dashboard(uid: user.uid)));
+                          });},
+                        
                           child: Row(
                             children: <Widget>[
                               Padding(
@@ -169,38 +185,7 @@ class _LoginForm extends State<Login> {
                           ),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)))),
-                  SizedBox(height: MediaQuery.of(context).size.height / 40),
-                  Container(
-                      width: MediaQuery.of(context).size.width -
-                          MediaQuery.of(context).size.width / 4,
-                      height: MediaQuery.of(context).size.height / 15,
-                      child: RaisedButton(
-                          color: Colors.blue[800],
-                          onPressed: () {},
-                          child: Row(
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(left: 18),
-                                child: Icon(
-                                  FontAwesomeIcons.facebookSquare,
-                                  color: Color(0xffFFFFFF),
-                                  size: 30.0,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text(
-                                  'Sign In with Facebook',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                              )
-                            ],
-                          ),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)))),
+                  
                   SizedBox(height: MediaQuery.of(context).size.height / 40),
                   Container(
                       width: MediaQuery.of(context).size.width -

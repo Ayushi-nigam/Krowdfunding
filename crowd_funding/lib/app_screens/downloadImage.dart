@@ -6,23 +6,29 @@ import 'dart:typed_data';
    //String downloadUrl;
    
      
-     Future<String> getProfileImage(String folderName , String FileName) async{
+     Future<Widget> getProfileImage(String folderName , String FileName) async{
+       Image m;
        firebase_storage.Reference photosReference = firebase_storage.FirebaseStorage.instance.ref().child(folderName).child(FileName);
+       try{
        String downloadAddress= await photosReference.getDownloadURL();
-      return downloadAddress;
-       //return downloadUrl;
-    //  int maxSize=7*1024*1024;
-    //  await photosReference.child("1nucdckUSJvLLa93pSZ4.jpg").getData(maxSize).then((data) {
-    //    imageFile=data;
-    //  }).catchError((error){
-
-    //  });
+       m = Image.network(
+      downloadAddress,
+      fit: BoxFit.fill,
+    );
+        return m;}
+        catch(e){
+          
+        }
+      
    }
-   Widget decideProfileImage(){
-     if(imageFile==null){
-       return Image(image: AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
-     }
-    else{
-       return Image.memory(imageFile,fit: BoxFit.fill,);
-     }}
+//    Future<Widget> _getImage(BuildContext context, String image) async {
+//   Image m;
+//   await FireStorageService.loadImage(context, image).then((downloadUrl) {
+//     m = Image.network(
+//       downloadUrl.toString(),
+//       fit: BoxFit.scaleDown,
+//     );
+//   });
+// return m;
+// }
  }
