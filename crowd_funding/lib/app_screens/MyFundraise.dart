@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crowd_funding/app_screens/TextFField.dart';
 import 'package:crowd_funding/common/FileStorage.dart';
+import 'package:crowd_funding/model/EventModel.dart';
 import 'package:crowd_funding/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -17,7 +18,7 @@ class MyFundraise extends StatefulWidget {
 class MyFundraiseState extends State<MyFundraise> {
   int currentStep = 0;
   bool complete = false;
-  User user = new User();
+  EventModel event = new EventModel();
   final List<DropdownMenuItem> items = [];
   final List<DropdownMenuItem> yearsOfExp = [];
   String selectedValueCity;
@@ -68,7 +69,7 @@ class MyFundraiseState extends State<MyFundraise> {
 
   next() {
     if (currentStep == 2) {
-      firebaseUsers.add(this.user.toJson()).then((value) {
+      firebaseUsers.add(this.event.toJson()).then((value) {
         currentStep + 1 != steps.length
             ? goTo(currentStep + 1)
             : setState(() => complete = true);
