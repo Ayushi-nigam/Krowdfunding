@@ -50,12 +50,12 @@ class Menu extends StatelessWidget {
                                       fontFamily: "Roboto",
                                     )),
                                 onPressed: () {
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => CameraApp(),
-                                  //   ),
-                                  // );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditProfile(),
+                                    ),
+                                  );
                                 },
                               ),
                               Icon(
