@@ -86,6 +86,7 @@ class TextFField extends StatelessWidget {
                 color: Theme.of(context).focusColor, style: BorderStyle.solid),
             borderRadius: BorderRadius.circular(5)),
       ),
+      onChanged:change,
       validator:validInput
     );
   }

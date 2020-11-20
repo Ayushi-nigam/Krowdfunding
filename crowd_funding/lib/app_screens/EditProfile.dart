@@ -19,6 +19,7 @@ class EditProfile extends StatefulWidget {
 }
 class _EditProfile extends State<EditProfile> {
   File _image;
+  int flag=0;
   Image imagePath;
   String nameEdit;
   String emailEdit;
@@ -46,26 +47,54 @@ class _EditProfile extends State<EditProfile> {
       }
     });
   }
-  
+  // textListner(){
+  //   nameEdit=
+  //   emailEdit=email.text;
+  //   mobileNoEdit=mobileNo.text;
+  // }
   @override
   void initState() {
     super.initState();
     retrieveProfilePhoto() ;
+    //mobileNo.addListener(textListner);
+    
   }
   @override
   Widget build(BuildContext context) {
   
     return new FutureBuilder(
       future: firestoreInstance.collection('UserProfile').doc("1nucdckUSJvLLa93pSZ4").get(),
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
+      builder: (context, snapshot) {
+      if (snapshot.hasData && flag==0) {
         print("fhhjg");
         print(snapshot.data["emailId"]);
-         name=TextEditingController(text:snapshot.data["firstName"]+snapshot.data["lastName"]);
+      name=TextEditingController(text:snapshot.data["firstName"]+snapshot.data["lastName"]);
       email=TextEditingController(text:snapshot.data["emailId"]);
       mobileNo=TextEditingController(text:snapshot.data["mobileNumber"]);
-      
-     return Scaffold(
+      return mainMethod();
+      }
+    else if(flag==1){
+      print("@ndgu");
+      name=null;
+      email=null;
+      mobileNo=null;
+      return mainMethod();
+    }
+    else
+    return CircularProgressIndicator();
+    });
+  }
+  void setUserDetail() {
+    var names=this.nameEdit.split(" ");
+    this.aUser.firstName = names[0];
+    this.aUser.lastName = names[1];
+    this.aUser.mobileNumber = this.mobileNoEdit;
+    this.aUser.emailId = this.emailEdit;
+   print(emailEdit);
+   
+  }
+  Widget mainMethod (){
+         return Scaffold(
       appBar: new AppBar(
         backgroundColor: Theme.of(context).appBarTheme.color,
         iconTheme: Theme.of(context).iconTheme,
@@ -140,11 +169,9 @@ class _EditProfile extends State<EditProfile> {
                              ),
                              onPressed: null,
                              ),
-                            // initvalue: name,
                           obscureTexts: false,
                           aTextInputType: TextInputType.name,
                           maxLenthOfTextField: null,
-                         // validInput: RegExp(r'[a-zA-Z]'),
                           lableTextField: "Full Name",
                           hintTextField: "Enter Full Name",
                           myController:this.name,
@@ -152,9 +179,17 @@ class _EditProfile extends State<EditProfile> {
                                if (value.isEmpty) {
                                   return "Please Enter Full Name";
                                 }
-                                return null;
+                                return null;},
+                                change:(text){
+                                  setState(() {
+                                    nameEdit=text;
+                                 name=text;
+                                 flag=1;
+                                  });
+                                 
                           }
                           ),
+                          
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                      Container(
@@ -170,8 +205,9 @@ class _EditProfile extends State<EditProfile> {
                              ),
                              onPressed: null,
                              ),
-                            //initvalue: emailEdit,
-                             myController:this.email,
+                            lableTextField: "Email Id",
+                          hintTextField: "Enter The Email Id",
+                           myController:this.email,
                           obscureTexts: false,
                           aTextInputType: TextInputType.emailAddress,
                           maxLenthOfTextField: null,
@@ -184,10 +220,15 @@ class _EditProfile extends State<EditProfile> {
                               if (!regex.hasMatch(value))
                                 {return 'Enter Valid Email';}
                                 return null;
-                          },
-                          lableTextField: "Email Id",
-                          hintTextField: "Enter The Email Id",
-                    
+                           },
+                            change:(text){
+                              setState(() {
+                                emailEdit=text;
+                                 email=text;
+                                 flag=1;
+                              });
+                                 
+                          }
                           ),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
@@ -207,6 +248,9 @@ class _EditProfile extends State<EditProfile> {
                           obscureTexts: false,
                           aTextInputType: TextInputType.number,
                           maxLenthOfTextField: 10,
+                          lableTextField: "Mobile Number",
+                            hintTextField: "Enter Mobile Number",
+                           myController:this.mobileNo,
                          validInput:(value) {
                               if (value.isEmpty) {
                                   return "Please Enter Mobile Number";
@@ -214,11 +258,14 @@ class _EditProfile extends State<EditProfile> {
                               if (value.length != 10)
                                  {return 'Mobile Number must be of 10 digit';}
                                 return null;},
-  
-                            lableTextField: "Mobile Number",
-                            hintTextField: "Enter Mobile Number",
-                           myController:this.mobileNo,
-                        //initvalue: mobileNoEdit,
+                                change:(text){
+                                  setState(() {
+                                    mobileNoEdit=text;
+                                 mobileNo=text;
+                                 flag=1;
+                                  });
+                                 
+                          }
                         )),
                         SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -256,21 +303,8 @@ class _EditProfile extends State<EditProfile> {
                     ] )
       ])
             ))
-    );}
-    else
-    return CircularProgressIndicator();
-    });
+    );
   }
-  void setUserDetail() {
-    var names=this.name.toString().split(" ");
-    this.aUser.firstName = names[0];
-    this.aUser.lastName = names[1];
-    this.aUser.mobileNumber = this.mobileNo.toString();
-    this.aUser.emailId = this.email.toString();
-   print(name);
-   
-  }
-
   @override
   void dispose() {
     this.name.dispose();
@@ -286,6 +320,7 @@ class _EditProfile extends State<EditProfile> {
     else{
       imagePath=Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
     }
-      });
-  }
+      });}
+      
+
 }
