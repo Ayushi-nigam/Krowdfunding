@@ -84,7 +84,7 @@ class MyFundraiseState extends State<MyFundraise> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => FundraiseList(),
+            builder: (context) => FundraiseList("My Fundraise"),
           ),
         );
       });

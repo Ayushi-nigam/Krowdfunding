@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class FundraiseList extends StatelessWidget {
+  String text;
+  FundraiseList(@required text);
   final CollectionReference firebaseEvents =
       FirebaseFirestore.instance.collection('Event');
   FileStorage aFileStorage = new FileStorage();
@@ -18,7 +20,7 @@ class FundraiseList extends StatelessWidget {
     return new Scaffold(
       appBar: new AppBar(
           title: new Text(
-        "My Fundraise",
+        text,
         style: new TextStyle(color: Colors.white),
       )),
       body: FutureBuilder(

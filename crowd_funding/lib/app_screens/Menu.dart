@@ -109,7 +109,7 @@ class Menu extends StatelessWidget {
                 ),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MyFundraise()));
+                      MaterialPageRoute(builder: (context) => FundraiseList("My Donation")));
                 },
               ),
               new ListTile(
@@ -123,7 +123,7 @@ class Menu extends StatelessWidget {
                 ),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => new FundraiseList()));
+                      MaterialPageRoute(builder: (context) => new FundraiseList("My Donation")));
                 },
               ),
               new ListTile(
