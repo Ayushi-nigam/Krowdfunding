@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -31,11 +32,11 @@ class FileStorage {
 
   Future<List<String>> downloadFile(firebase_storage.Reference ref) async {
     List<String> aPath = new List<String>();
+    var completer = new Completer<List<String>>();
     try {
       await ref
           .list(firebase_storage.ListOptions(maxResults: 8))
           .then((value) async {
-        int i = 0;
         for (var item in value.items) {
           final Directory systemTempDir = Directory.systemTemp;
           final File tempFile = File('${systemTempDir.path}/temp-${item.name}');
@@ -46,6 +47,7 @@ class FileStorage {
     } catch (e) {
       return null;
     }
-    return aPath;
+    completer.complete(aPath);
+    return completer.future;
   }
 }
