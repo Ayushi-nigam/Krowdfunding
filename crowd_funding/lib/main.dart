@@ -1,4 +1,3 @@
-import 'package:crowd_funding/app_screens/Dashboard.dart';
 import 'package:firebase_core/firebase_core.dart';
 // import 'package:flutter/material.dart';
 
@@ -10,7 +9,7 @@ bool USE_FIRESTORE_EMULATOR = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  
+
   runApp(new CrowdfundApp());
 }
 

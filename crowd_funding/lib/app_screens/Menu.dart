@@ -1,3 +1,4 @@
+import 'package:crowd_funding/app_screens/FundraiseList.dart';
 import 'package:crowd_funding/common/CameraApp.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -96,7 +97,7 @@ class Menu extends StatelessWidget {
                 ),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => My_Donation()));
+                      MaterialPageRoute(builder: (context) => new FundraiseList()));
                 },
               ),
               new ListTile(

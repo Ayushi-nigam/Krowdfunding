@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crowd_funding/app_screens/FundraiseList.dart';
 import 'package:crowd_funding/app_screens/TextFField.dart';
 import 'package:crowd_funding/common/FileStorage.dart';
+import 'package:crowd_funding/model/EventModel.dart';
 import 'package:crowd_funding/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -17,13 +19,20 @@ class MyFundraise extends StatefulWidget {
 class MyFundraiseState extends State<MyFundraise> {
   int currentStep = 0;
   bool complete = false;
-  User user = new User();
+  TextEditingController ownerNameController = TextEditingController();
+  TextEditingController projectNameController = TextEditingController();
+  TextEditingController campaginDiscriptionController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController campaginDaysController = TextEditingController();
+  TextEditingController goalAmountController = TextEditingController();
+  TextEditingController categoryController = TextEditingController();
+  EventModel event = new EventModel();
   final List<DropdownMenuItem> items = [];
   final List<DropdownMenuItem> yearsOfExp = [];
   String selectedValueCity;
   String selectedValueResidence;
   CollectionReference firebaseUsers =
-      FirebaseFirestore.instance.collection('UserProfile');
+      FirebaseFirestore.instance.collection('Event');
 
   Set<String> path = new Set<String>();
   FileStorage aFileStorage = new FileStorage();
@@ -68,10 +77,17 @@ class MyFundraiseState extends State<MyFundraise> {
 
   next() {
     if (currentStep == 2) {
-      firebaseUsers.add(this.user.toJson()).then((value) {
+      this.setEventDetails();
+      firebaseUsers.add(this.event.toJson()).then((value) {
         currentStep + 1 != steps.length
             ? goTo(currentStep + 1)
             : setState(() => complete = true);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FundraiseList(),
+          ),
+        );
       });
     } else {
       currentStep + 1 != steps.length
@@ -130,6 +146,7 @@ class MyFundraiseState extends State<MyFundraise> {
                     width: MediaQuery.of(context).size.width -
                         MediaQuery.of(context).size.width / 3,
                     child: new TextFField(
+                      myController: ownerNameController,
                       lableTextField: "Owner Name",
                       hintTextField: "Enter The Owner Name",
                       suffixIcons: null,
@@ -146,6 +163,7 @@ class MyFundraiseState extends State<MyFundraise> {
                     width: MediaQuery.of(context).size.width -
                         MediaQuery.of(context).size.width / 3,
                     child: new TextFField(
+                      myController: projectNameController,
                       lableTextField: "Project Name",
                       hintTextField: "Enter The Project Name",
                       suffixIcons: null,
@@ -162,6 +180,7 @@ class MyFundraiseState extends State<MyFundraise> {
                     width: MediaQuery.of(context).size.width -
                         MediaQuery.of(context).size.width / 3,
                     child: new TextFField(
+                      myController: campaginDiscriptionController,
                       lableTextField: "Campagin Discription",
                       hintTextField: "Enter The Campagin Discription",
                       suffixIcons: null,
@@ -180,6 +199,7 @@ class MyFundraiseState extends State<MyFundraise> {
                     width: MediaQuery.of(context).size.width -
                         MediaQuery.of(context).size.width / 3,
                     child: new TextFField(
+                      myController: cityController,
                       lableTextField: "City",
                       hintTextField: "Enter The City",
                       suffixIcons: null,
@@ -215,6 +235,7 @@ class MyFundraiseState extends State<MyFundraise> {
                     width: MediaQuery.of(context).size.width -
                         MediaQuery.of(context).size.width / 3,
                     child: new TextFField(
+                      myController: campaginDaysController,
                       lableTextField: "Campagin Days",
                       hintTextField: "Enter The Campagin Days",
                       suffixIcons: null,
@@ -231,6 +252,7 @@ class MyFundraiseState extends State<MyFundraise> {
                     width: MediaQuery.of(context).size.width -
                         MediaQuery.of(context).size.width / 3,
                     child: new TextFField(
+                      myController: goalAmountController,
                       lableTextField: "Goal Amount",
                       hintTextField: "Enter The Goal Amount",
                       suffixIcons: null,
@@ -247,27 +269,12 @@ class MyFundraiseState extends State<MyFundraise> {
                     width: MediaQuery.of(context).size.width -
                         MediaQuery.of(context).size.width / 3,
                     child: new TextFField(
-                      lableTextField: "Goal Amount",
-                      hintTextField: "Enter The Goal Amount",
-                      suffixIcons: null,
-                      obscureTexts: false,
-                      aTextInputType: TextInputType.number,
-                      validInput: (value) {
-                        if (value.isEmpty) {
-                          return "Please Enter Goal Amount";
-                        }
-                        return null;
-                      },
-                    )),
-                new Container(
-                    width: MediaQuery.of(context).size.width -
-                        MediaQuery.of(context).size.width / 3,
-                    child: new TextFField(
+                      myController: categoryController,
                       lableTextField: "Sub Category",
                       hintTextField: "Enter The Sub Category",
                       suffixIcons: null,
                       obscureTexts: false,
-                      aTextInputType: TextInputType.number,
+                      aTextInputType: TextInputType.text,
                       validInput: (value) {
                         if (value.isEmpty) {
                           return "Please Enter Sub Category";
@@ -442,6 +449,17 @@ class MyFundraiseState extends State<MyFundraise> {
                 ),
               ),
             ])));
+  }
+
+  void setEventDetails() {
+    this.event.ownerName = this.ownerNameController.text;
+    this.event.projectName = this.projectNameController.text;
+    this.event.campaginDiscription = this.campaginDiscriptionController.text;
+    this.event.campaginDays = int.parse(this.campaginDaysController.text);
+    this.event.category = this.categoryController.text;
+    this.event.createdDate = new DateTime.now().toString();
+    this.event.goalAmount = int.parse(this.goalAmountController.text);
+    this.event.userId = 'akash';
   }
 }
 
