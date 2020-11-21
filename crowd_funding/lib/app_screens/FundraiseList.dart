@@ -8,6 +8,8 @@ import 'package:crowd_funding/model/EventModel.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
+import 'MyFundraiseDetailView.dart';
+
 class FundraiseList extends StatelessWidget {
   final CollectionReference firebaseEvents =
       FirebaseFirestore.instance.collection('Event');
@@ -34,112 +36,145 @@ class FundraiseList extends StatelessWidget {
                     height: MediaQuery.of(context).size.height / 25);
               },
               itemBuilder: (context, index) {
-                return new Container(
-                  height: MediaQuery.of(context).size.height / 6,
-                  width: MediaQuery.of(context).size.width / 6,
-                  child: new Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        new Align(
-                          alignment: Alignment.centerLeft,
-                          child: new Container(
-                              child: CircleAvatar(
-                            radius: MediaQuery.of(context).size.width / 8,
-                            child: ClipOval(
-                              child: new SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  height:
-                                      MediaQuery.of(context).size.height / 5,
-                                  child: Image.file(
-                                    new File(this
-                                        .aEventModel
-                                        .elementAt(index)
-                                        .pictureLocation),
-                                    fit: BoxFit.fill,
-                                  )),
-                            ),
-                          )),
-                        ),
-                        new Align(
-                            alignment: Alignment.topCenter,
-                            child: new Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                new Align(
-                                  alignment: Alignment.topLeft,
-                                  child: new Text(
-                                    this
-                                        .aEventModel
-                                        .elementAt(index)
-                                        .projectName,
-                                    style: new TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height / 14,
-                                ),
-                                new Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: new Container(
-                                      width:
-                                          MediaQuery.of(context).size.width / 4,
-                                      child: (new DateTime.now()
-                                                  .difference(DateTime.parse(
-                                                      this
-                                                          .aEventModel
-                                                          .elementAt(index)
-                                                          .createdDate))
-                                                  .inDays) ==
-                                              0
-                                          ? Center(child: new Text("Today"))
-                                          : Center(
-                                              child: new Text((new DateTime
-                                                              .now()
-                                                          .difference(DateTime
-                                                              .parse(this
-                                                                  .aEventModel
-                                                                  .elementAt(
-                                                                      index)
-                                                                  .createdDate))
-                                                          .inDays)
-                                                      .toString() +
-                                                  " days ago")),
-                                      decoration: new BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius: BorderRadius.circular(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  6)),
-                                    ))
-                              ],
+                return new InkWell(
+                  onTap: () {
+                   Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => new MyFundraiseDetailView(),
+                                    ),
+                                  );
+                  },
+                  child: new Container(
+                    height: MediaQuery.of(context).size.height / 6,
+                    width: MediaQuery.of(context).size.width / 6,
+                    child: new Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          new Align(
+                            alignment: Alignment.centerLeft,
+                            child: new Container(
+                                child: CircleAvatar(
+                              radius: MediaQuery.of(context).size.width / 8,
+                              child: ClipOval(
+                                child: new SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    height:
+                                        MediaQuery.of(context).size.height / 5,
+                                    child: Image.file(
+                                      new File(this
+                                          .aEventModel
+                                          .elementAt(index)
+                                          .pictureLocation),
+                                      fit: BoxFit.fill,
+                                    )),
+                              ),
                             )),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width / 14,
-                        ),
-                        new Align(
-                          alignment: Alignment.bottomRight,
-                          heightFactor: 5.4,
-                          child: new Container(
-                            height: MediaQuery.of(context).size.height / 35,
-                            width: MediaQuery.of(context).size.width / 4,
-                            child: Center(child: new Text("Finished")),
-                            decoration: new BoxDecoration(
-                                color: Colors.green,
-                                borderRadius: BorderRadius.circular(
-                                    MediaQuery.of(context).size.width / 6)),
                           ),
-                        )
-                      ]),
-                  decoration: new BoxDecoration(
-                    color: Theme.of(context).primaryColorLight,
-                    borderRadius: BorderRadius.circular(
-                        MediaQuery.of(context).size.width / 8),
+                          new Align(
+                              alignment: Alignment.topCenter,
+                              child: new Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  new Align(
+                                    alignment: Alignment.topLeft,
+                                    child: new Text(
+                                      this
+                                          .aEventModel
+                                          .elementAt(index)
+                                          .projectName,
+                                      style: new TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height / 14,
+                                  ),
+                                  new Align(
+                                      alignment: Alignment.bottomLeft,
+                                      child: new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                4,
+                                        child: (new DateTime.now()
+                                                    .difference(DateTime.parse(
+                                                        this
+                                                            .aEventModel
+                                                            .elementAt(index)
+                                                            .createdDate))
+                                                    .inDays) ==
+                                                0
+                                            ? Center(child: new Text("Today"))
+                                            : Center(
+                                                child: new Text((new DateTime
+                                                                .now()
+                                                            .difference(DateTime
+                                                                .parse(this
+                                                                    .aEventModel
+                                                                    .elementAt(
+                                                                        index)
+                                                                    .createdDate))
+                                                            .inDays)
+                                                        .toString() +
+                                                    " days ago")),
+                                        decoration: new BoxDecoration(
+                                            color: Colors.grey,
+                                            borderRadius: BorderRadius.circular(
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    6)),
+                                      ))
+                                ],
+                              )),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 14,
+                          ),
+                          new Align(
+                            alignment: Alignment.bottomRight,
+                            heightFactor: 5.4,
+                            child: new Container(
+                              height: MediaQuery.of(context).size.height / 35,
+                              width: MediaQuery.of(context).size.width / 4,
+                              // ignore: unrelated_type_equality_checks
+                              child: (0 ==
+                                      new DateTime.now().difference(
+                                          DateTime.parse(this
+                                              .aEventModel
+                                              .elementAt(index)
+                                              .createdDate)))
+                                  ? Center(child: new Text("Finished"))
+                                  : Center(child: new Text("In Progress")),
+                              // ignore: unrelated_type_equality_checks
+                              decoration: (new DateTime.now().difference(
+                                          DateTime.parse(this
+                                              .aEventModel
+                                              .elementAt(index)
+                                              .createdDate)) ==
+                                      0)
+                                  ? new BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(
+                                          MediaQuery.of(context).size.width /
+                                              6))
+                                  : new BoxDecoration(
+                                      color: Colors.yellow,
+                                      borderRadius: BorderRadius.circular(
+                                          MediaQuery.of(context).size.width /
+                                              6)),
+                            ),
+                          )
+                        ]),
+                    decoration: new BoxDecoration(
+                      color: Theme.of(context).primaryColorLight,
+                      borderRadius: BorderRadius.circular(
+                          MediaQuery.of(context).size.width / 8),
+                    ),
                   ),
                 );
               },
