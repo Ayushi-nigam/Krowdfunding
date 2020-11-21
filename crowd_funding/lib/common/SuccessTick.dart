@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FlareActor("assets/riv/sucessCheck.flr",
+      body: FlareActor("assets/riv/sucessCheck.flr2d",
           alignment: Alignment.center, fit: BoxFit.contain, animation: "Idle"),
     );
   }

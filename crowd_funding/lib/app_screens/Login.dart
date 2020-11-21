@@ -65,7 +65,6 @@ class _LoginForm extends State<Login> {
                           },
                           lableTextField: "Enter Email",
                           hintTextField: "Enter your email Id",
-                          //errorText: "Please Enter Email Id",
                         )),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     Container(
@@ -78,7 +77,6 @@ class _LoginForm extends State<Login> {
                           aTextInputType: TextInputType.visiblePassword,
                           maxLine: 1,
                           maxLenthOfTextField: 15,
-                         // validInput: RegExp(r'[a-zA-Z0-9@#$%&*^]'),
                           lableTextField: "Enter Password",
                           hintTextField: "Enter your password",
                          suffixIcons: IconButton(

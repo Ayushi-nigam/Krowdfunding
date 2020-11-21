@@ -1,21 +1,17 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'dart:typed_data';
+
 
 class downloadImage {
-  Uint8List imageFile;
-  //String downloadUrl;
-
-  Future<Widget> getProfileImage(String folderName, String FileName) async {
+  
+  Future<Widget> getProfileImage(String uid, String folderName) async {
     Image aImage;
     var completer = new Completer<Widget>();
     firebase_storage.Reference photosReference = firebase_storage
         .FirebaseStorage.instance
-        .ref()
-        .child(folderName)
-        .child(FileName);
+        .ref().child(uid)
+        .child(folderName);
     try {
       String downloadAddress = await photosReference.getDownloadURL();
       aImage = Image.network(
@@ -26,14 +22,4 @@ class downloadImage {
     } catch (e) {}
     return completer.future;
   }
-//    Future<Widget> _getImage(BuildContext context, String image) async {
-//   Image m;
-//   await FireStorageService.loadImage(context, image).then((downloadUrl) {
-//     m = Image.network(
-//       downloadUrl.toString(),
-//       fit: BoxFit.scaleDown,
-//     );
-//   });
-// return m;
-// }
 }

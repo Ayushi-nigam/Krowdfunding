@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class FundraiseList extends StatelessWidget {
+  String text,uid;
+  FundraiseList(@required this.text ,this.uid);
   final CollectionReference firebaseEvents =
       FirebaseFirestore.instance.collection('Event');
   FileStorage aFileStorage = new FileStorage();
@@ -18,7 +20,7 @@ class FundraiseList extends StatelessWidget {
     return new Scaffold(
       appBar: new AppBar(
           title: new Text(
-        "My Fundraise",
+        this.text,
         style: new TextStyle(color: Colors.white),
       )),
       body: FutureBuilder(
@@ -155,7 +157,7 @@ class FundraiseList extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => new MyFundraise(),
+              builder: (context) => new MyFundraise(uid),
             ),
           );
         },
@@ -167,7 +169,7 @@ class FundraiseList extends StatelessWidget {
     var completer = new Completer<List<EventModel>>();
 
     firebaseEvents
-        .where('userId', isEqualTo: 'akash')
+        .where('userId', isEqualTo: uid)
         .get()
         .then((value) async {
       List<EventModel> aEventModelList = new List<EventModel>();
@@ -175,8 +177,8 @@ class FundraiseList extends StatelessWidget {
         await aFileStorage
             .downloadFile(firebase_storage.FirebaseStorage.instance
                 .ref()
-                .child('akash')
-                .child("image"))
+                .child(uid)
+                .child("Documents"))
             .then((value) {
           EventModel aEventModel = new EventModel();
           aEventModel = EventModel.fromJson(item.data());

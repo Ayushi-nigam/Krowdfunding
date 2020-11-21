@@ -1,12 +1,11 @@
 import 'package:crowd_funding/app_screens/Dashboard.dart';
-import 'package:crowd_funding/app_screens/My_Donation.dart';
 import 'package:crowd_funding/app_screens/downloadImage.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'TextFField.dart';
-import 'cameraImageUpload.dart';
+import 'package:crowd_funding/common/FileStorage.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:path/path.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:crowd_funding/common/successTick.dart';
 import 'package:crowd_funding/model/User.dart';
@@ -25,18 +24,19 @@ class _EditProfile extends State<EditProfile> {
   final String uid;
   _EditProfile(this.uid);
   File _image;
-  int flag = 0;
+  bool flag=false;
   Image imagePath;
-  String nameEdit;
-  String emailEdit;
+  String firstNameEdit;
+  String lastNameEdit;
   String mobileNoEdit;
   final editFormKey = GlobalKey<FormState>();
   TextEditingController name = TextEditingController();
   TextEditingController mobileNo = TextEditingController();
+  TextEditingController lastName=TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   final firestoreInstance = FirebaseFirestore.instance;
-  cameraImageUpload cameraa = new cameraImageUpload();
+  FileStorage aFileStorage = new FileStorage();
   downloadImage download = new downloadImage();
   final picker = ImagePicker();
 
@@ -53,36 +53,23 @@ class _EditProfile extends State<EditProfile> {
     });
   }
 
-  // textListner(){
-  //   nameEdit=
-  //   emailEdit=email.text;
-  //   mobileNoEdit=mobileNo.text;
-  // }
-  @override
-  void initState() {
-    super.initState();
-    //retrieveProfilePhoto() ;
-    //mobileNo.addListener(textListner);
-  }
-
   @override
   Widget build(BuildContext context) {
     return new FutureBuilder(
         //future: firestoreInstance.collection('UserProfile').doc(uid).get(),
         future: firestoreInstance
             .collection('UserProfile')
-            .doc('Skzv51vye3fcS8uawGuyBPW3hfD2')
+            .doc(uid)
             .get(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             print(snapshot.data["emailId"]);
-            if (flag != 1) {
-              this.name = TextEditingController(
-                  text: snapshot.data["firstName"] + snapshot.data["lastName"]);
-              email = TextEditingController(text: snapshot.data["emailId"]);
-              mobileNo =
-                  TextEditingController(text: snapshot.data["mobileNumber"]);
-              password = TextEditingController(text: snapshot.data["password"]);
+            if (!(flag)) {
+              this.name = TextEditingController(text: snapshot.data["firstName"] );
+              this.lastName=TextEditingController(text: snapshot.data["lastName"]);
+              this.email = TextEditingController(text: snapshot.data["emailId"]);
+              this.mobileNo =TextEditingController(text: snapshot.data["mobileNumber"]);
+              this.password = TextEditingController(text: snapshot.data["password"]);
             }
 
             return Scaffold(
@@ -120,19 +107,15 @@ class _EditProfile extends State<EditProfile> {
                                           fit: BoxFit.fill,
                                         )
                                       : FutureBuilder(
-                                          future: download.getProfileImage(
-                                              "ProfilePhotos", uid),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.hasData) {
-                                              return snapshot.data;
-                                            } else
-                                              return Image(
-                                                image: AssetImage(
-                                                  'assets/Images/profile.png',
-                                                ),
-                                                fit: BoxFit.fill,
-                                              );
-                                          }),
+                              future: download.getProfileImage(uid, "ProfilePhotos"),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData){
+                                 return snapshot.data;
+                                 }
+                                 else  return Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
+                              }
+                        ),
+                                            
                                 ),
                               ),
                             ),
@@ -183,20 +166,19 @@ class _EditProfile extends State<EditProfile> {
                                   obscureTexts: false,
                                   aTextInputType: TextInputType.name,
                                   maxLenthOfTextField: null,
-                                  lableTextField: "Full Name",
-                                  hintTextField: "Enter Full Name",
+                                  lableTextField: "First Name",
+                                  hintTextField: "Enter First Name",
                                   myController: this.name,
                                   validInput: (value) {
                                     if (value.isEmpty) {
-                                      return "Please Enter Full Name";
+                                      return "Please Enter First Name";
                                     }
                                     return null;
                                   },
                                   change: (text) {
                                     setState(() {
-                                      // nameEdit = text;
-                                      // name = text;
-                                      flag = 1;
+                                       firstNameEdit = text;
+                                      flag = true;
                                     });
                                   }),
                             ),
@@ -216,29 +198,22 @@ class _EditProfile extends State<EditProfile> {
                                     ),
                                     onPressed: null,
                                   ),
-                                  lableTextField: "Email Id",
-                                  hintTextField: "Enter The Email Id",
-                                  myController: this.email,
+                                  lableTextField: "Last Name",
+                                  hintTextField: "Enter The Last Name",
+                                  myController: this.lastName,
                                   obscureTexts: false,
-                                  aTextInputType: TextInputType.emailAddress,
+                                  aTextInputType: TextInputType.name,
                                   maxLenthOfTextField: null,
                                   validInput: (value) {
                                     if (value.isEmpty) {
-                                      return "Please Enter Email Id";
-                                    }
-                                    Pattern pattern =
-                                        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                                    RegExp regex = new RegExp(pattern);
-                                    if (!regex.hasMatch(value)) {
-                                      return 'Enter Valid Email';
+                                      return "Please Enter Last Name";
                                     }
                                     return null;
                                   },
                                   change: (text) {
                                     setState(() {
-                                      emailEdit = text;
-                                      email = text;
-                                      flag = 1;
+                                      lastNameEdit = text;
+                                      flag = true;
                                     });
                                   }),
                             ),
@@ -277,8 +252,7 @@ class _EditProfile extends State<EditProfile> {
                                     change: (text) {
                                       setState(() {
                                         mobileNoEdit = text;
-                                        mobileNo = text;
-                                        flag = 1;
+                                        flag = true;
                                       });
                                     })),
                             SizedBox(
@@ -302,8 +276,8 @@ class _EditProfile extends State<EditProfile> {
                                           fontWeight: FontWeight.w400),
                                     ),
                                     onPressed: () {
-                                      cameraa.uploadPic(context, _image,
-                                          "ProfilePhotos", uid);
+                                     aFileStorage.uploadFile(_image, uid,
+                                      'ProfilePhotos' ,null);
                                       if (editFormKey.currentState.validate()) {
                                         this.setUserDetail();
                                         this
@@ -316,7 +290,7 @@ class _EditProfile extends State<EditProfile> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  new My_Donation(),
+                                                  new Dashboard(uid:uid),
                                             ),
                                           );
                                         });
@@ -325,18 +299,20 @@ class _EditProfile extends State<EditProfile> {
                           ])
                     ]))));
           } else
-            return CircularProgressIndicator();
+            return CircularProgressIndicator(backgroundColor:Theme.of(context).focusColor, );
         });
   }
 
   void setUserDetail() {
-    var names = this.nameEdit.split(" ");
-    this.aUser.firstName = names[0];
-    this.aUser.lastName = names[1];
-    this.aUser.mobileNumber = this.mobileNoEdit;
-    this.aUser.emailId = this.emailEdit;
+    if(firstNameEdit!=null){this.aUser.firstName = this.firstNameEdit;}
+    if(lastNameEdit!=null){this.aUser.lastName = this.lastNameEdit;}
+    if(mobileNoEdit!=null){this.aUser.mobileNumber = this.mobileNoEdit;}
+    this.aUser.firstName=this.name.text;
+    this.aUser.lastName = lastName.text;
+    this.aUser.mobileNumber = this.mobileNo.text;
+    this.aUser.emailId = this.email.text;
     this.aUser.password = this.password.text;
-    print(nameEdit);
+    print(name.text);
   }
 
   @override
@@ -346,14 +322,6 @@ class _EditProfile extends State<EditProfile> {
     this.email.dispose();
     super.dispose();
   }
-//  retrieveProfilePhoto()  {
-//    download.getProfileImage("ProfilePhotos",uid).then((value1) {
-//           if(value1 != null){
-//         imagePath=Image.network(value1,fit: BoxFit.fill,);
-//     }
-//     else{
-//       imagePath=Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
-//     }
-//       });}
+
 
 }
