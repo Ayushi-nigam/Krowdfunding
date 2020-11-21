@@ -18,14 +18,23 @@ class FileStorage {
 
   /// The user selects a file, and the task is added to the list.
   firebase_storage.UploadTask uploadFile(
-      File file, String userId, String folderName) {
+      File file,String uid,String folderName, String fileName) {
     // Create a Reference to the file
+    if(fileName!= null){
     firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
         .ref()
-        .child(userId)
+        .child(uid)
+        .child(folderName).child(fileName);
+
+    return ref.putFile(file);}
+    else{
+      firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+        .ref()
+        .child(uid)
         .child(folderName);
 
     return ref.putFile(file);
+    }
   }
 
   /// Handles the user pressing the PopupMenuItem item.
@@ -43,11 +52,12 @@ class FileStorage {
           if (!tempFile.existsSync()) await item.writeToFile(tempFile);
           aPath.add(tempFile.path);
         }
+        completer.complete(aPath);
       });
     } catch (e) {
       return null;
     }
-    completer.complete(aPath);
+    
     return completer.future;
   }
 }

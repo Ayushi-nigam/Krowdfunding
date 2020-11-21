@@ -2,6 +2,8 @@ import 'package:crowd_funding/app_screens/FundraiseList.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:crowd_funding/common/FileStorage.dart';
 import 'downloadImage.dart';
 import 'Dashboard.dart';
 import 'EditProfile.dart';
@@ -13,6 +15,7 @@ import 'Rewards.dart';
 class Menu extends StatelessWidget {
   String uid;
   String name="UserName";
+  FileStorage aFileStorage = new FileStorage();
   downloadImage download = new downloadImage();
   Image imagePath;
   final firestoreInstance = FirebaseFirestore.instance;
@@ -21,7 +24,7 @@ class Menu extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(future:firestoreInstance.collection('UserProfile').doc(uid).get(),
+    return FutureBuilder(future:firestoreInstance.collection('UserProfile').doc(this.uid).get(),
 
     builder: (context,snapshot){
       if(snapshot.hasData){
@@ -37,20 +40,23 @@ class Menu extends StatelessWidget {
                 child: Container(
                     child: Row(
                   children: <Widget>[
-                    SizedBox(
+                    CircleAvatar(
+                              radius: MediaQuery.of(context).size.width / 8,
+                              child: ClipOval(
+                                child: new SizedBox(
+                   
                       width: MediaQuery.of(context).size.width -
-                          MediaQuery.of(context).size.width / 1.3,
+                          MediaQuery.of(context).size.width / 2,
                       height: MediaQuery.of(context).size.height / 5,
                       child:FutureBuilder(
-                              future: download.getProfileImage("ProfilePhotos", uid),
+                              future: download.getProfileImage(uid, "ProfilePhotos"),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData){
-                                  return  snapshot.data;
-                                }
-                                else return Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
+                                 return snapshot.data;}
+                                 else  return Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
                               }
                         ),
-                    ),
+                    ))),
                     new Container(
                         margin: EdgeInsets.only(
                             top: MediaQuery.of(context).size.width / 8),
@@ -104,7 +110,7 @@ class Menu extends StatelessWidget {
                 ),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => FundraiseList("My Donation")));
+                      MaterialPageRoute(builder: (context) => new FundraiseList("My Fundraise",uid)));
                 },
               ),
               new ListTile(
@@ -118,7 +124,7 @@ class Menu extends StatelessWidget {
                 ),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => new FundraiseList("My Donation")));
+                      MaterialPageRoute(builder: (context) => new FundraiseList("My Donation",uid)));
                 },
               ),
               new ListTile(

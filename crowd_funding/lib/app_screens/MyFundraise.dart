@@ -10,11 +10,15 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
 
 class MyFundraise extends StatefulWidget {
+  String uid;
+  MyFundraise(@required uid);
   @override
-  MyFundraiseState createState() => new MyFundraiseState();
+  MyFundraiseState createState() => new MyFundraiseState(uid);
 }
 
 class MyFundraiseState extends State<MyFundraise> {
+  String uid;
+  MyFundraiseState(@required uid);
   int currentStep = 0;
   bool complete = false;
   TextEditingController ownerNameController = TextEditingController();
@@ -39,7 +43,7 @@ class MyFundraiseState extends State<MyFundraise> {
   dynamic _pickImageError;
   String _retrieveDataError;
   final ImagePicker _picker = ImagePicker();
-  int imageCount;
+  int imageCount=0;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   void _onImageButtonPressed(ImageSource source, {BuildContext context}) async {
@@ -52,10 +56,10 @@ class MyFundraiseState extends State<MyFundraise> {
             MediaQuery.of(context).size.height / 2,
         imageQuality: 100,
       );
-      setState(() async {
+      setState(()  {
         _imageFile = pickedFile;
         FileStorage aFileStorage = new FileStorage();
-        aFileStorage.uploadFile(new File(_imageFile.path), 'akash',
+        aFileStorage.uploadFile(new File(_imageFile.path), "Skzv51vye3fcS8uawGuyBPW3hfD2","Documents",
             'document' + (this.imageCount + 1).toString());
       });
     } catch (e) {
@@ -83,7 +87,7 @@ class MyFundraiseState extends State<MyFundraise> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => FundraiseList("My Fundraise"),
+            builder: (context) => FundraiseList("My Fundraise",uid),
           ),
         );
       });
@@ -293,7 +297,9 @@ class MyFundraiseState extends State<MyFundraise> {
           content: FutureBuilder(
             future: downloadDocument(),
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
+             if(snapshot.data==null){
+               this.path=new Set<String>();
+             }else
                 this.path = snapshot.data;
                 return new Column(children: [
                   new Container(
@@ -395,8 +401,7 @@ class MyFundraiseState extends State<MyFundraise> {
                     )),
                   ),
                 ]);
-              } else
-                return new CircularProgressIndicator();
+              
             },
           ))
     ];
@@ -408,8 +413,8 @@ class MyFundraiseState extends State<MyFundraise> {
     apathList = await aFileStorage.downloadFile(firebase_storage
         .FirebaseStorage.instance
         .ref()
-        .child('akash')
-        .child("image"));
+        .child(uid)
+        .child("Documents"));
     this.imageCount = apathList.length;
     return apathList.toSet();
     ;
@@ -429,7 +434,7 @@ class MyFundraiseState extends State<MyFundraise> {
               Expanded(
                 child: Stepper(
                   steps: createSteps(context),
-                  type: StepperType.horizontal,
+                  type: StepperType.vertical,
                   currentStep: currentStep,
                   onStepContinue: next,
                   onStepCancel: cancel,
@@ -446,7 +451,7 @@ class MyFundraiseState extends State<MyFundraise> {
     this.event.category = this.categoryController.text;
     this.event.createdDate = new DateTime.now().toString();
     this.event.goalAmount = int.parse(this.goalAmountController.text);
-    this.event.userId = 'akash';
+    this.event.userId = this.uid;
   }
 }
 

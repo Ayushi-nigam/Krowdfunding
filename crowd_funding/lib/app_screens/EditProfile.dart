@@ -1,5 +1,6 @@
 import 'package:crowd_funding/app_screens/Dashboard.dart';
 import 'package:crowd_funding/app_screens/downloadImage.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'TextFField.dart';
 import 'package:crowd_funding/common/FileStorage.dart';
@@ -31,6 +32,7 @@ class _EditProfile extends State<EditProfile> {
   final editFormKey = GlobalKey<FormState>();
   TextEditingController name = TextEditingController();
   TextEditingController mobileNo = TextEditingController();
+  TextEditingController lastName=TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   final firestoreInstance = FirebaseFirestore.instance;
@@ -63,11 +65,10 @@ class _EditProfile extends State<EditProfile> {
           if (snapshot.hasData) {
             print(snapshot.data["emailId"]);
             if (!(flag)) {
-              this.name = TextEditingController(
-                  text: snapshot.data["firstName"] + snapshot.data["lastName"]);
+              this.name = TextEditingController(text: snapshot.data["firstName"] );
+              this.lastName=TextEditingController(text: snapshot.data["lastName"]);
               this.email = TextEditingController(text: snapshot.data["emailId"]);
-              this.mobileNo =
-                  TextEditingController(text: snapshot.data["mobileNumber"]);
+              this.mobileNo =TextEditingController(text: snapshot.data["mobileNumber"]);
               this.password = TextEditingController(text: snapshot.data["password"]);
             }
 
@@ -106,19 +107,15 @@ class _EditProfile extends State<EditProfile> {
                                           fit: BoxFit.fill,
                                         )
                                       : FutureBuilder(
-                                          future: download.getProfileImage(uid,
-                                              "ProfilePhotos", ""),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.hasData) {
-                                              return snapshot.data;
-                                            } else
-                                              return Image(
-                                                image: AssetImage(
-                                                  'assets/Images/profile.png',
-                                                ),
-                                                fit: BoxFit.fill,
-                                              );
-                                          }),
+                              future: download.getProfileImage(uid, "ProfilePhotos"),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData){
+                                 return snapshot.data;
+                                 }
+                                 else  return Image(image:AssetImage('assets/Images/profile.png',),fit: BoxFit.fill,);
+                              }
+                        ),
+                                            
                                 ),
                               ),
                             ),
@@ -203,13 +200,13 @@ class _EditProfile extends State<EditProfile> {
                                   ),
                                   lableTextField: "Last Name",
                                   hintTextField: "Enter The Last Name",
-                                  myController: this.email,
+                                  myController: this.lastName,
                                   obscureTexts: false,
                                   aTextInputType: TextInputType.name,
                                   maxLenthOfTextField: null,
                                   validInput: (value) {
                                     if (value.isEmpty) {
-                                      return "Please Enter First Name";
+                                      return "Please Enter Last Name";
                                     }
                                     return null;
                                   },
@@ -280,7 +277,7 @@ class _EditProfile extends State<EditProfile> {
                                     ),
                                     onPressed: () {
                                      aFileStorage.uploadFile(_image, uid,
-                                      'ProfilePhotos' );
+                                      'ProfilePhotos' ,null);
                                       if (editFormKey.currentState.validate()) {
                                         this.setUserDetail();
                                         this
@@ -293,7 +290,7 @@ class _EditProfile extends State<EditProfile> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  new Dashboard(),
+                                                  new Dashboard(uid:uid),
                                             ),
                                           );
                                         });
@@ -302,17 +299,20 @@ class _EditProfile extends State<EditProfile> {
                           ])
                     ]))));
           } else
-            return CircularProgressIndicator();
+            return CircularProgressIndicator(backgroundColor:Theme.of(context).focusColor, );
         });
   }
 
   void setUserDetail() {
-
-    this.aUser.firstName = firstNameEdit;
-    this.aUser.lastName = lastNameEdit;
-    this.aUser.mobileNumber = this.mobileNoEdit;
+    if(firstNameEdit!=null){this.aUser.firstName = this.firstNameEdit;}
+    if(lastNameEdit!=null){this.aUser.lastName = this.lastNameEdit;}
+    if(mobileNoEdit!=null){this.aUser.mobileNumber = this.mobileNoEdit;}
+    this.aUser.firstName=this.name.text;
+    this.aUser.lastName = lastName.text;
+    this.aUser.mobileNumber = this.mobileNo.text;
     this.aUser.emailId = this.email.text;
     this.aUser.password = this.password.text;
+    print(name.text);
   }
 
   @override

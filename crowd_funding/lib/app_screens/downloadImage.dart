@@ -5,14 +5,13 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class downloadImage {
   
-  Future<Widget> getProfileImage(String uid, String folderName ,String fileName) async {
+  Future<Widget> getProfileImage(String uid, String folderName) async {
     Image aImage;
     var completer = new Completer<Widget>();
     firebase_storage.Reference photosReference = firebase_storage
         .FirebaseStorage.instance
         .ref().child(uid)
-        .child(folderName)
-        .child(fileName);
+        .child(folderName);
     try {
       String downloadAddress = await photosReference.getDownloadURL();
       aImage = Image.network(
