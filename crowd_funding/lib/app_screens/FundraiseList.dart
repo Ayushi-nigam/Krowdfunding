@@ -11,6 +11,8 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'MyFundraiseDetailView.dart';
 
 class FundraiseList extends StatelessWidget {
+  String text, uid;
+  FundraiseList(@required this.text, this.uid);
   final CollectionReference firebaseEvents =
       FirebaseFirestore.instance.collection('Event');
   FileStorage aFileStorage = new FileStorage();
@@ -20,7 +22,7 @@ class FundraiseList extends StatelessWidget {
     return new Scaffold(
       appBar: new AppBar(
           title: new Text(
-        "My Fundraise",
+        this.text,
         style: new TextStyle(color: Colors.white),
       )),
       body: FutureBuilder(
@@ -38,12 +40,12 @@ class FundraiseList extends StatelessWidget {
               itemBuilder: (context, index) {
                 return new InkWell(
                   onTap: () {
-                   Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => new MyFundraiseDetailView(),
-                                    ),
-                                  );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => new MyFundraiseDetailView(),
+                      ),
+                    );
                   },
                   child: new Container(
                     height: MediaQuery.of(context).size.height / 6,
@@ -187,10 +189,11 @@ class FundraiseList extends StatelessWidget {
         child: new Icon(Icons.add),
         backgroundColor: Theme.of(context).buttonColor,
         onPressed: () {
+          print(uid);
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => new MyFundraise(),
+              builder: (context) => new MyFundraise("My Fundraise",uid),
             ),
           );
         },
@@ -201,17 +204,14 @@ class FundraiseList extends StatelessWidget {
   Future<List<EventModel>> retrieveEvent() {
     var completer = new Completer<List<EventModel>>();
 
-    firebaseEvents
-        .where('userId', isEqualTo: 'akash')
-        .get()
-        .then((value) async {
+    firebaseEvents.where('userId', isEqualTo: uid).get().then((value) async {
       List<EventModel> aEventModelList = new List<EventModel>();
       for (var item in value.docs) {
         await aFileStorage
             .downloadFile(firebase_storage.FirebaseStorage.instance
                 .ref()
-                .child('akash')
-                .child("image"))
+                .child(uid)
+                .child("Documents"))
             .then((value) {
           EventModel aEventModel = new EventModel();
           aEventModel = EventModel.fromJson(item.data());

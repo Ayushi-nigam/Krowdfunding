@@ -67,19 +67,23 @@ class _DashboardState extends State<Dashboard> {
       ),
       drawer: Menu(uid),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: CarouselWithIndicatorDemo(),
+      body: new CarouselWithIndicatorDemo('', this.uid),
     );
   }
 }
 
 class CarouselWithIndicatorDemo extends StatefulWidget {
+  final String text, uid;
+  CarouselWithIndicatorDemo(this.text, this.uid);
   @override
   State<StatefulWidget> createState() {
-    return _CarouselWithIndicatorState();
+    return _CarouselWithIndicatorState('', this.uid);
   }
 }
 
 class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
+  final String text, uid;
+  _CarouselWithIndicatorState(this.text, this.uid);
   int _current = 0;
   final CollectionReference firebaseEvents =
       FirebaseFirestore.instance.collection('Event');
@@ -119,8 +123,8 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
                                       height:
                                           MediaQuery.of(context).size.height /
                                               5,
-                                      child: Image.file(
-                                        new File(aEvent.pictureLocation),
+                                      child: Image.network(
+                                        aEvent.pictureLocation,
                                         fit: BoxFit.fill,
                                       )),
                                 ),
@@ -152,52 +156,70 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
     );
   }
 
+  // Future<List<EventModel>> retrieveEvent() {
+  //   var completer = new Completer<List<EventModel>>();
+
+  //   firebaseEvents
+  //       .where('userId', isEqualTo: 'akash')
+  //       .get()
+  //       .then((value) async {
+  //     List<EventModel> aEventModelList = new List<EventModel>();
+  //     for (var item in value.docs) {
+  //       await aFileStorage
+  //           .downloadFile(firebase_storage.FirebaseStorage.instance
+  //               .ref()
+  //               .child('akash')
+  //               .child("image"))
+  //           .then((value) {
+  //         EventModel aEventModel = new EventModel();
+  //         aEventModel = EventModel.fromJson(item.data());
+  //         aEventModel.pictureLocation = value.first;
+  //         aEventModelList.add(aEventModel);
+  //       });
+  //     }
+  //     completer.complete(aEventModelList);
+  //   });
+  //   return completer.future;
+  // }
   Future<List<EventModel>> retrieveEvent() {
     var completer = new Completer<List<EventModel>>();
+    List<EventModel> aEventModelList = new List<EventModel>();
+    EventModel aEventModel = new EventModel();
+    aEventModel.campaginDays = 15;
+    aEventModel.campaginDiscription = 'Help is needed';
+    aEventModel.category = 'Medical';
+    aEventModel.createdDate = '2020-11-21 11:05:26.134260';
+    aEventModel.ownerName = 'sunny';
+    aEventModel.goalAmount = 50000;
+    aEventModel.projectName = 'Cancer';
+    aEventModel.userId = '';
+    aEventModel.pictureLocation =
+        'https://i.picsum.photos/id/9/250/250.jpg?hmac=tqDH5wEWHDN76mBIWEPzg1in6egMl49qZeguSaH9_VI';
+    aEventModelList.add(aEventModel);
+    aEventModel.campaginDays = 25;
+    aEventModel.campaginDiscription = 'Help is needed';
+    aEventModel.category = 'Medical';
+    aEventModel.createdDate = '2020-11-19 11:05:26.134260';
+    aEventModel.ownerName = 'Akash';
+    aEventModel.goalAmount = 1000;
+    aEventModel.projectName = 'Covid';
+    aEventModel.userId = '';
+    aEventModel.pictureLocation =
+        'https://i.picsum.photos/id/9/250/250.jpg?hmac=tqDH5wEWHDN76mBIWEPzg1in6egMl49qZeguSaH9_VI';
+    aEventModelList.add(aEventModel);
+    aEventModel.campaginDays = 25;
+    aEventModel.campaginDiscription = 'Marketing stratgies';
+    aEventModel.category = 'Equity';
+    aEventModel.createdDate = '2020-11-19 11:05:26.134260';
+    aEventModel.ownerName = 'yash';
+    aEventModel.goalAmount = 15000;
+    aEventModel.projectName = 'Aay works';
+    aEventModel.userId = '';
+    aEventModel.pictureLocation =
+        'https://i.picsum.photos/id/9/250/250.jpg?hmac=tqDH5wEWHDN76mBIWEPzg1in6egMl49qZeguSaH9_VI';
+    aEventModelList.add(aEventModel);
+    completer.complete(aEventModelList);
 
-    firebaseEvents
-        .where('userId', isEqualTo: 'akash')
-        .get()
-        .then((value) async {
-      List<EventModel> aEventModelList = new List<EventModel>();
-      for (var item in value.docs) {
-        await aFileStorage
-            .downloadFile(firebase_storage.FirebaseStorage.instance
-                .ref()
-                .child('akash')
-                .child("image"))
-            .then((value) {
-          EventModel aEventModel = new EventModel();
-          aEventModel = EventModel.fromJson(item.data());
-          aEventModel.pictureLocation = value.first;
-          aEventModelList.add(aEventModel);
-        });
-      }
-      completer.complete(aEventModelList);
-    });
     return completer.future;
   }
 }
-
-final List<String> imgList = [
-  'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
-  'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
-  'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
-  'https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=89719a0d55dd05e2deae4120227e6efc&auto=format&fit=crop&w=1953&q=80',
-  'https://images.unsplash.com/photo-1508704019882-f9cf40e475b4?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8c6e5e3aba713b17aa1fe71ab4f0ae5b&auto=format&fit=crop&w=1352&q=80',
-  'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
-];
-final List<Widget> imageSliders = imgList
-    .map((item) => Container(
-          child: Container(
-            margin: EdgeInsets.all(5.0),
-            child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                child: Stack(
-                  children: <Widget>[
-                    Image.network(item, fit: BoxFit.cover, width: 1000.0),
-                  ],
-                )),
-          ),
-        ))
-    .toList();

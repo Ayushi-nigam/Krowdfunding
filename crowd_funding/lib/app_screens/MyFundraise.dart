@@ -10,11 +10,15 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
 
 class MyFundraise extends StatefulWidget {
+  final String text, uid;
+  MyFundraise(this.text, this.uid);
   @override
-  MyFundraiseState createState() => new MyFundraiseState();
+  MyFundraiseState createState() => new MyFundraiseState(this.text, this.uid);
 }
 
 class MyFundraiseState extends State<MyFundraise> {
+  final String text, uid;
+  MyFundraiseState(this.text, this.uid);
   int currentStep = 0;
   bool complete = false;
   TextEditingController ownerNameController = TextEditingController();
@@ -39,7 +43,7 @@ class MyFundraiseState extends State<MyFundraise> {
   dynamic _pickImageError;
   String _retrieveDataError;
   final ImagePicker _picker = ImagePicker();
-  int imageCount;
+  int imageCount = 0;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   void _onImageButtonPressed(ImageSource source, {BuildContext context}) async {
@@ -52,10 +56,10 @@ class MyFundraiseState extends State<MyFundraise> {
             MediaQuery.of(context).size.height / 2,
         imageQuality: 100,
       );
-      setState(() async {
+      setState(() {
         _imageFile = pickedFile;
         FileStorage aFileStorage = new FileStorage();
-        aFileStorage.uploadFile(new File(_imageFile.path), 'akash',
+        aFileStorage.uploadFile(new File(_imageFile.path), uid, "Documents",
             'document' + (this.imageCount + 1).toString());
       });
     } catch (e) {
@@ -83,7 +87,7 @@ class MyFundraiseState extends State<MyFundraise> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => FundraiseList(),
+            builder: (context) => FundraiseList("My Fundraise", uid),
           ),
         );
       });
@@ -293,110 +297,107 @@ class MyFundraiseState extends State<MyFundraise> {
           content: FutureBuilder(
             future: downloadDocument(),
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.data == null) {
+                this.path = new Set<String>();
+              } else
                 this.path = snapshot.data;
-                return new Column(children: [
-                  new Container(
-                    height: MediaQuery.of(context).size.height -
-                        MediaQuery.of(context).size.height / 2,
-                    width: MediaQuery.of(context).size.width -
-                        MediaQuery.of(context).size.width / 4,
-                    decoration: new BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).primaryColorLight),
-                    alignment: Alignment.center,
-                    child: new Scrollbar(
-                        child: new Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Align(
-                          child: new Text("Upload Photos",
-                              style: new TextStyle(fontSize: 18)),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height /
-                              3, // constrain height
-                          child: GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3),
-                            itemCount: this.path.length,
-                            itemBuilder: (context, index) {
-                              return new InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      if (this.path.elementAt(index) != '') {
-                                      } else {
-                                        Scaffold.of(context).showSnackBar(
-                                            SnackBar(
-                                                content: Text('No Image')));
-                                      }
-                                    });
-                                  },
-                                  child: new RadioItem(
-                                      this.path.elementAt(index)));
-                            },
-                          ),
-                        ),
-                        new Align(
-                          alignment: Alignment.bottomRight,
-                          child: ClipOval(
-                            child: Material(
-                              color:
-                                  Theme.of(context).buttonColor, // button color
-                              child: InkWell(
-                                splashColor: Colors.red, // inkwell color
-                                child: SizedBox(
-                                    width: 56,
-                                    height: 56,
-                                    child: Icon(Icons.add)),
+              return new Column(children: [
+                new Container(
+                  height: MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).size.height / 2,
+                  width: MediaQuery.of(context).size.width -
+                      MediaQuery.of(context).size.width / 4,
+                  decoration: new BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Theme.of(context).primaryColorLight),
+                  alignment: Alignment.center,
+                  child: new Scrollbar(
+                      child: new Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Align(
+                        child: new Text("Upload Photos",
+                            style: new TextStyle(fontSize: 18)),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height /
+                            3, // constrain height
+                        child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3),
+                          itemCount: this.path.length,
+                          itemBuilder: (context, index) {
+                            return new InkWell(
                                 onTap: () {
-                                  _scaffoldKey.currentState
-                                      .showSnackBar(SnackBar(
-                                          duration: new Duration(seconds: 10),
-                                          content: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: <Widget>[
-                                              Semantics(
-                                                label:
-                                                    'image_picker_example_from_gallery',
-                                                child: new RaisedButton(
-                                                  onPressed: () {
-                                                    _onImageButtonPressed(
-                                                        ImageSource.gallery,
-                                                        context: context);
-                                                  },
-                                                  child: const Icon(
-                                                      Icons.photo_library),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 16.0),
-                                                child: new RaisedButton(
-                                                  onPressed: () {
-                                                    _onImageButtonPressed(
-                                                        ImageSource.camera,
-                                                        context: context);
-                                                  },
-                                                  child: const Icon(
-                                                      Icons.camera_alt),
-                                                ),
-                                              ),
-                                            ],
-                                          )));
+                                  setState(() {
+                                    if (this.path.elementAt(index) != '') {
+                                    } else {
+                                      Scaffold.of(context).showSnackBar(
+                                          SnackBar(content: Text('No Image')));
+                                    }
+                                  });
                                 },
-                              ),
+                                child:
+                                    new RadioItem(this.path.elementAt(index)));
+                          },
+                        ),
+                      ),
+                      new Align(
+                        alignment: Alignment.bottomRight,
+                        child: ClipOval(
+                          child: Material(
+                            color:
+                                Theme.of(context).buttonColor, // button color
+                            child: InkWell(
+                              splashColor: Colors.red, // inkwell color
+                              child: SizedBox(
+                                  width: 56,
+                                  height: 56,
+                                  child: Icon(Icons.add)),
+                              onTap: () {
+                                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                    duration: new Duration(seconds: 10),
+                                    content: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: <Widget>[
+                                        Semantics(
+                                          label:
+                                              'image_picker_example_from_gallery',
+                                          child: new RaisedButton(
+                                            onPressed: () {
+                                              _onImageButtonPressed(
+                                                  ImageSource.gallery,
+                                                  context: context);
+                                            },
+                                            child:
+                                                const Icon(Icons.photo_library),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 16.0),
+                                          child: new RaisedButton(
+                                            onPressed: () {
+                                              _onImageButtonPressed(
+                                                  ImageSource.camera,
+                                                  context: context);
+                                            },
+                                            child: const Icon(Icons.camera_alt),
+                                          ),
+                                        ),
+                                      ],
+                                    )));
+                              },
                             ),
                           ),
-                        )
-                      ],
-                    )),
-                  ),
-                ]);
-              } else
-                return new CircularProgressIndicator();
+                        ),
+                      )
+                    ],
+                  )),
+                ),
+              ]);
             },
           ))
     ];
@@ -405,23 +406,12 @@ class MyFundraiseState extends State<MyFundraise> {
   List<Step> steps;
   Future<Set<String>> downloadDocument() async {
     List<String> apathList = List<String>();
-    //for (var i = 0; i < 6; i++) {
     apathList = await aFileStorage.downloadFile(firebase_storage
         .FirebaseStorage.instance
         .ref()
-        .child('akash')
-        .child("image"));
-    // .child('document' + (i + 1).toString()));
-
-    // if (apath != null) {
-    //   apathList.add(apath);
-    // } else {
-    //   apathList.add('');
-    // }
-    // }
+        .child(uid)
+        .child("Documents"));
     this.imageCount = apathList.length;
-    //this.path.add(_imageFile.path);
-    //apathList.add(_imageFile.path);
     return apathList.toSet();
     ;
   }
@@ -440,7 +430,7 @@ class MyFundraiseState extends State<MyFundraise> {
               Expanded(
                 child: Stepper(
                   steps: createSteps(context),
-                  type: StepperType.horizontal,
+                  type: StepperType.vertical,
                   currentStep: currentStep,
                   onStepContinue: next,
                   onStepCancel: cancel,
@@ -457,7 +447,7 @@ class MyFundraiseState extends State<MyFundraise> {
     this.event.category = this.categoryController.text;
     this.event.createdDate = new DateTime.now().toString();
     this.event.goalAmount = int.parse(this.goalAmountController.text);
-    this.event.userId = 'akash';
+    this.event.userId = this.uid;
   }
 }
 
