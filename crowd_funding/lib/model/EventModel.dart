@@ -1,28 +1,33 @@
 class EventModel {
   String ownerName;
   String projectName;
+  String city;
   String campaginDiscription;
   int campaginDays;
   int goalAmount;
   String category;
   String createdDate;
   String pictureLocation;
+  List<String> multiplePictureLocation;
   String userId;
 
   EventModel() {
     ownerName = "";
     projectName = "";
+    city="";
     campaginDiscription = "";
     campaginDays = 0;
     goalAmount = 0;
     category = '';
     createdDate = '';
     pictureLocation = "";
+    multiplePictureLocation=[];
     userId = "";
   }
   EventModel.fromJson(Map<String, dynamic> json)
       : ownerName = json['ownerName'],
         projectName = json['projectName'],
+        city = json['city'],
         campaginDiscription = json['campaginDiscription'],
         campaginDays = json['campaginDays'],
         goalAmount = json['goalAmount'],
@@ -34,10 +39,11 @@ class EventModel {
         'ownerName': this.ownerName,
         'projectName': this.projectName,
         'campaginDiscription': this.campaginDiscription,
+        'city':this.city,
         'createdDate': this.createdDate,
         'goalAmount': this.goalAmount,
         'category': this.category,
         'campaginDays': this.campaginDays,
-        'userId': this.userId
+        'userId': this.userId,
       };
 }

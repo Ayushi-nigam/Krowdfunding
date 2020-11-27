@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crowd_funding/app_screens/MyFundraise.dart';
 import 'package:crowd_funding/common/FileStorage.dart';
 import 'package:crowd_funding/model/EventModel.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-
 import 'MyFundraiseDetailView.dart';
-
+import 'Dashboard.dart';
 class FundraiseList extends StatelessWidget {
   String text, uid;
   FundraiseList(@required this.text, this.uid);
@@ -24,7 +22,20 @@ class FundraiseList extends StatelessWidget {
           title: new Text(
         this.text,
         style: new TextStyle(color: Colors.white),
-      )),
+      ),
+      leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white70,
+          onPressed: () {
+             Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => new Dashboard(uid:this.uid),
+            ),
+          );
+          },
+        )
+      ),
       body: FutureBuilder(
         future: retrieveEvent(),
         builder: (context, snapshot) {
@@ -43,7 +54,7 @@ class FundraiseList extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => new MyFundraiseDetailView(),
+                        builder: (context) => new MyFundraiseDetailView(uid:this.uid,currentProjectName:this.aEventModel.elementAt(index).projectName),
                       ),
                     );
                   },
@@ -64,11 +75,10 @@ class FundraiseList extends StatelessWidget {
                                     width: MediaQuery.of(context).size.width,
                                     height:
                                         MediaQuery.of(context).size.height / 5,
-                                    child: Image.file(
-                                      new File(this
+                                    child: Image.network(this
                                           .aEventModel
                                           .elementAt(index)
-                                          .pictureLocation),
+                                          .pictureLocation,
                                       fit: BoxFit.fill,
                                     )),
                               ),
@@ -95,7 +105,7 @@ class FundraiseList extends StatelessWidget {
                                   ),
                                   SizedBox(
                                     height:
-                                        MediaQuery.of(context).size.height / 14,
+                                        MediaQuery.of(context).size.height / 18,
                                   ),
                                   new Align(
                                       alignment: Alignment.bottomLeft,
@@ -103,27 +113,14 @@ class FundraiseList extends StatelessWidget {
                                         width:
                                             MediaQuery.of(context).size.width /
                                                 4,
-                                        child: (new DateTime.now()
-                                                    .difference(DateTime.parse(
+                                        child:Center(child:noOfLeftDays((DateTime.parse(
                                                         this
                                                             .aEventModel
                                                             .elementAt(index)
-                                                            .createdDate))
-                                                    .inDays) ==
-                                                0
-                                            ? Center(child: new Text("Today"))
-                                            : Center(
-                                                child: new Text((new DateTime
-                                                                .now()
-                                                            .difference(DateTime
-                                                                .parse(this
-                                                                    .aEventModel
-                                                                    .elementAt(
-                                                                        index)
-                                                                    .createdDate))
-                                                            .inDays)
-                                                        .toString() +
-                                                    " days ago")),
+                                                            .createdDate)),this
+                                                            .aEventModel
+                                                            .elementAt(index)
+                                                            .campaginDays)),
                                         decoration: new BoxDecoration(
                                             color: Colors.grey,
                                             borderRadius: BorderRadius.circular(
@@ -135,23 +132,23 @@ class FundraiseList extends StatelessWidget {
                                 ],
                               )),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width / 14,
+                            width: MediaQuery.of(context).size.width / 19,
                           ),
                           new Align(
                             alignment: Alignment.bottomRight,
                             heightFactor: 5.4,
                             child: new Container(
                               height: MediaQuery.of(context).size.height / 35,
-                              width: MediaQuery.of(context).size.width / 4,
+                              width: MediaQuery.of(context).size.width / 3,
                               // ignore: unrelated_type_equality_checks
-                              child: (0 ==
-                                      new DateTime.now().difference(
-                                          DateTime.parse(this
-                                              .aEventModel
-                                              .elementAt(index)
-                                              .createdDate)))
-                                  ? Center(child: new Text("Finished"))
-                                  : Center(child: new Text("In Progress")),
+                              child: Center(child:currentStatus((DateTime.parse(
+                                                        this
+                                                            .aEventModel
+                                                            .elementAt(index)
+                                                            .createdDate)),this
+                                                            .aEventModel
+                                                            .elementAt(index)
+                                                            .campaginDays)),
                               // ignore: unrelated_type_equality_checks
                               decoration: (new DateTime.now().difference(
                                           DateTime.parse(this
@@ -182,7 +179,7 @@ class FundraiseList extends StatelessWidget {
               },
             );
           }
-          return new Text("data");
+          return new CircularProgressIndicator(strokeWidth:10.0);
         },
       ),
       floatingActionButton: new FloatingActionButton(
@@ -200,22 +197,46 @@ class FundraiseList extends StatelessWidget {
       ),
     );
   }
-
+  Widget noOfLeftDays(DateTime aDate ,int campaginDays){
+    var leftDays= DateTime.now().difference(aDate).inDays;
+          if(leftDays<campaginDays){
+          return  new  Text((campaginDays-leftDays).toString()+" Days Remain",textAlign: TextAlign.center,);
+          }
+          else if(leftDays==campaginDays){
+           return new Text("Today",);
+          }
+          else{
+            return new Text("Time Over");
+          }
+  }
+  Widget currentStatus(DateTime aDate ,int campaginDays){
+    var leftDays= DateTime.now().difference(aDate).inDays;
+          if(leftDays<=campaginDays){
+          return  new  Text("In Progress");
+          }
+          else{
+            return new Text("Finished");
+          }
+  }
   Future<List<EventModel>> retrieveEvent() {
     var completer = new Completer<List<EventModel>>();
-
-    firebaseEvents.where('userId', isEqualTo: uid).get().then((value) async {
-      List<EventModel> aEventModelList = new List<EventModel>();
+    FirebaseFirestore.instance.collection("EventDocument").doc("events").collection(uid).get().then((value) async {
+      List<EventModel> aEventModelList = new List<EventModel>();print("eventmodel");
+      print(value.docs);
+      int count=0;
       for (var item in value.docs) {
+        count++;
         await aFileStorage
             .downloadFile(firebase_storage.FirebaseStorage.instance
                 .ref()
                 .child(uid)
-                .child("Documents"))
-            .then((value) {
+                .child("Documents").child("event"+count.toString()))
+            .then((value1) {
+              print("value1 in download");
+              print(value1.first);
           EventModel aEventModel = new EventModel();
           aEventModel = EventModel.fromJson(item.data());
-          aEventModel.pictureLocation = value.first;
+          aEventModel.pictureLocation = value1.first;
           aEventModelList.add(aEventModel);
         });
       }

@@ -1,3 +1,4 @@
+import 'package:crowd_funding/model/User.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auths;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ showErrDialog(BuildContext context, String err) {
 
 // many unhandled google error exist
 // will push them soon
-Future<bool> googleSignIn() async {
+Future<auths.User> googleSignIn() async {
   GoogleSignInAccount googleSignInAccount = await gooleSignIn.signIn();
 
   if (googleSignInAccount != null) {
@@ -43,9 +44,10 @@ Future<bool> googleSignIn() async {
     auths.UserCredential result = await auth.signInWithCredential(credential);
 
     auths.User user = await auth.currentUser;
+    print("Inside google sign in");
     print(user.uid);
 
-    return Future.value(true);
+    return Future.value(user);
   }
 }
 
@@ -63,24 +65,13 @@ Future<auths.User> signin(
     // simply passing error code as a message
     print(e.code);
     switch (e.code) {
-      case 'ERROR_INVALID_EMAIL':
+      case "user-not-found":
         showErrDialog(context, e.code);
         break;
-      case 'ERROR_WRONG_PASSWORD':
+      case 'wrong-password':
         showErrDialog(context, e.code);
         break;
-      case 'ERROR_USER_NOT_FOUND':
-        showErrDialog(context, e.code);
-        break;
-      case 'ERROR_USER_DISABLED':
-        showErrDialog(context, e.code);
-        break;
-      case 'ERROR_TOO_MANY_REQUESTS':
-        showErrDialog(context, e.code);
-        break;
-      case 'ERROR_OPERATION_NOT_ALLOWED':
-        showErrDialog(context, e.code);
-        break;
+      
     }
     // since we are not actually continuing after displaying errors
     // the false value will not be returned
@@ -101,14 +92,8 @@ Future<auths.User> signUp(
     // return Future.value(true);
   } catch (error) {
     switch (error.code) {
-      case 'ERROR_EMAIL_ALREADY_IN_USE':
+      case 'email-already-in-use':
         showErrDialog(context, "Email Already Exists");
-        break;
-      case 'ERROR_INVALID_EMAIL':
-        showErrDialog(context, "Invalid Email Address");
-        break;
-      case 'ERROR_WEAK_PASSWORD':
-        showErrDialog(context, "Please Choose a stronger password");
         break;
     }
     return Future.value(null);

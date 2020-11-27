@@ -1,4 +1,4 @@
-import 'package:crowd_funding/app_screens/Dashboard.dart';
+import 'package:crowd_funding/app_screens/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:flare_flutter/flare_actor.dart';
 
@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => new Dashboard(),
+            builder: (context) => new Login(),
           ));
     });
   }

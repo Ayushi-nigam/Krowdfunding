@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crowd_funding/common/FileStorage.dart';
 import 'package:crowd_funding/model/EventModel.dart';
 import 'package:flutter/material.dart';
 import 'Menu.dart';
-
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class Dashboard extends StatefulWidget {
@@ -65,7 +63,7 @@ class _DashboardState extends State<Dashboard> {
         ],
         elevation: 15,
       ),
-      drawer: Menu(uid),
+      drawer: Menu(this.uid),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: new CarouselWithIndicatorDemo('', this.uid),
     );
@@ -116,7 +114,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
                               alignment: Alignment.centerLeft,
                               child: new Container(
                                   child: CircleAvatar(
-                                radius: MediaQuery.of(context).size.width / 8,
+                                radius: MediaQuery.of(context).size.width / 6,
                                 child: ClipOval(
                                   child: new SizedBox(
                                       width: MediaQuery.of(context).size.width,
@@ -156,70 +154,70 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
     );
   }
 
-  // Future<List<EventModel>> retrieveEvent() {
-  //   var completer = new Completer<List<EventModel>>();
-
-  //   firebaseEvents
-  //       .where('userId', isEqualTo: 'akash')
-  //       .get()
-  //       .then((value) async {
-  //     List<EventModel> aEventModelList = new List<EventModel>();
-  //     for (var item in value.docs) {
-  //       await aFileStorage
-  //           .downloadFile(firebase_storage.FirebaseStorage.instance
-  //               .ref()
-  //               .child('akash')
-  //               .child("image"))
-  //           .then((value) {
-  //         EventModel aEventModel = new EventModel();
-  //         aEventModel = EventModel.fromJson(item.data());
-  //         aEventModel.pictureLocation = value.first;
-  //         aEventModelList.add(aEventModel);
-  //       });
-  //     }
-  //     completer.complete(aEventModelList);
-  //   });
-  //   return completer.future;
-  // }
   Future<List<EventModel>> retrieveEvent() {
     var completer = new Completer<List<EventModel>>();
-    List<EventModel> aEventModelList = new List<EventModel>();
-    EventModel aEventModel = new EventModel();
-    aEventModel.campaginDays = 15;
-    aEventModel.campaginDiscription = 'Help is needed';
-    aEventModel.category = 'Medical';
-    aEventModel.createdDate = '2020-11-21 11:05:26.134260';
-    aEventModel.ownerName = 'sunny';
-    aEventModel.goalAmount = 50000;
-    aEventModel.projectName = 'Cancer';
-    aEventModel.userId = '';
-    aEventModel.pictureLocation =
-        'https://i.picsum.photos/id/9/250/250.jpg?hmac=tqDH5wEWHDN76mBIWEPzg1in6egMl49qZeguSaH9_VI';
-    aEventModelList.add(aEventModel);
-    aEventModel.campaginDays = 25;
-    aEventModel.campaginDiscription = 'Help is needed';
-    aEventModel.category = 'Medical';
-    aEventModel.createdDate = '2020-11-19 11:05:26.134260';
-    aEventModel.ownerName = 'Akash';
-    aEventModel.goalAmount = 1000;
-    aEventModel.projectName = 'Covid';
-    aEventModel.userId = '';
-    aEventModel.pictureLocation =
-        'https://i.picsum.photos/id/9/250/250.jpg?hmac=tqDH5wEWHDN76mBIWEPzg1in6egMl49qZeguSaH9_VI';
-    aEventModelList.add(aEventModel);
-    aEventModel.campaginDays = 25;
-    aEventModel.campaginDiscription = 'Marketing stratgies';
-    aEventModel.category = 'Equity';
-    aEventModel.createdDate = '2020-11-19 11:05:26.134260';
-    aEventModel.ownerName = 'yash';
-    aEventModel.goalAmount = 15000;
-    aEventModel.projectName = 'Aay works';
-    aEventModel.userId = '';
-    aEventModel.pictureLocation =
-        'https://i.picsum.photos/id/9/250/250.jpg?hmac=tqDH5wEWHDN76mBIWEPzg1in6egMl49qZeguSaH9_VI';
-    aEventModelList.add(aEventModel);
-    completer.complete(aEventModelList);
 
+    firebaseEvents
+        .where('userId', isEqualTo: uid)
+        .get()
+        .then((value) async {
+      List<EventModel> aEventModelList = new List<EventModel>();
+      for (var item in value.docs) {
+        await aFileStorage
+            .downloadFile(firebase_storage.FirebaseStorage.instance
+                .ref()
+                .child('akash')
+                .child("image"))
+            .then((value) {
+          EventModel aEventModel = new EventModel();
+          aEventModel = EventModel.fromJson(item.data());
+          aEventModel.pictureLocation = value.first;
+          aEventModelList.add(aEventModel);
+        });
+      }
+      completer.complete(aEventModelList);
+    });
     return completer.future;
   }
+  // Future<List<EventModel>> retrieveEvent() {
+  //   var completer = new Completer<List<EventModel>>();
+  //   List<EventModel> aEventModelList = new List<EventModel>();
+  //   EventModel aEventModel = new EventModel();
+  //   aEventModel.campaginDays = 15;
+  //   aEventModel.campaginDiscription = 'Help is needed';
+  //   aEventModel.category = 'Medical';
+  //   aEventModel.createdDate = '2020-11-21 11:05:26.134260';
+  //   aEventModel.ownerName = 'sunny';
+  //   aEventModel.goalAmount = 50000;
+  //   aEventModel.projectName = 'Cancer';
+  //   aEventModel.userId = '';
+  //   aEventModel.pictureLocation =
+  //       'https://i.picsum.photos/id/9/250/250.jpg?hmac=tqDH5wEWHDN76mBIWEPzg1in6egMl49qZeguSaH9_VI';
+  //   aEventModelList.add(aEventModel);
+  //   aEventModel.campaginDays = 25;
+  //   aEventModel.campaginDiscription = 'Help is needed';
+  //   aEventModel.category = 'Medical';
+  //   aEventModel.createdDate = '2020-11-19 11:05:26.134260';
+  //   aEventModel.ownerName = 'Akash';
+  //   aEventModel.goalAmount = 1000;
+  //   aEventModel.projectName = 'Covid';
+  //   aEventModel.userId = '';
+  //   aEventModel.pictureLocation =
+  //       'https://i.picsum.photos/id/9/250/250.jpg?hmac=tqDH5wEWHDN76mBIWEPzg1in6egMl49qZeguSaH9_VI';
+  //   aEventModelList.add(aEventModel);
+  //   aEventModel.campaginDays = 25;
+  //   aEventModel.campaginDiscription = 'Marketing stratgies';
+  //   aEventModel.category = 'Equity';
+  //   aEventModel.createdDate = '2020-11-19 11:05:26.134260';
+  //   aEventModel.ownerName = 'yash';
+  //   aEventModel.goalAmount = 15000;
+  //   aEventModel.projectName = 'Aay works';
+  //   aEventModel.userId = '';
+  //   aEventModel.pictureLocation =
+  //       'https://i.picsum.photos/id/9/250/250.jpg?hmac=tqDH5wEWHDN76mBIWEPzg1in6egMl49qZeguSaH9_VI';
+  //   aEventModelList.add(aEventModel);
+  //   completer.complete(aEventModelList);
+
+  //   return completer.future;
+  // }
 }
