@@ -1,11 +1,13 @@
 import 'dart:ui';
 import 'dart:async';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:crowd_funding/common/SuccessTick.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:crowd_funding/app_screens/FundraiseList.dart';
 import 'package:crowd_funding/common/FileStorage.dart';
 import 'package:crowd_funding/model/EventModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crowd_funding/model/TransactionModel.dart';
 import 'package:flutter/material.dart';
 
 class MyFundraiseDetailView extends StatefulWidget {
@@ -21,10 +23,12 @@ class MyFundraiseDetailView extends StatefulWidget {
 class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
   final String uid;
   String currentProjectName='';
+  final firestoreInstance = FirebaseFirestore.instance;
   final CollectionReference firebaseEvents =
       FirebaseFirestore.instance.collection('Event');
   FileStorage aFileStorage = new FileStorage();
   EventModel aEventModel;
+  TransactionModel aTransactionModel=new TransactionModel();
   int _current = 0;
   _myFundraiseDetailViewState(this.uid,this.currentProjectName);
   @override
@@ -32,7 +36,7 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
     return new Scaffold(
       appBar: new AppBar(
           title: new Text(
-            "Campaign Days",
+            "Campaign ",
             style: TextStyle(color: Colors.white),
           ),
           leading: IconButton(
@@ -77,6 +81,7 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
                 color: Theme.of(context).focusColor,
                 child: ListView(
                   children: [
+                    SizedBox(height: MediaQuery.of(context).size.height/60,),
                     Row(children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width / 14,
@@ -234,7 +239,33 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
                                   fontSize: 14, fontWeight: FontWeight.w400),
                             ),
                             onPressed: () {
-                              
+                              //calling Alert box to retreive donate amount
+                              customsAlertbox(context).then((value){
+                                //Getting document name of donated eventfrom firebase
+                                this.firestoreInstance.collection("EventDocument")
+                                .doc("events").collection(uid).where('projectName',isEqualTo:this.aEventModel.projectName)
+                                .get().then((docName){
+                                  //update the donated amount in event document of firebase
+                                  this.firestoreInstance.collection("EventDocument")
+                                .doc("events").collection(uid).doc(docName.docs.first.id).
+                                update({"collectedAmount":int.parse(value)+this.aEventModel.collectedAmount}).whenComplete(() {
+                                 });} );
+                                //calling setTransaction method to set data in TransactionModel
+                                setTransactionDetail(this.aEventModel.userId,uid, this.aEventModel.projectName, int.parse(value));
+                                // set Trasaction details in firebase
+                                this.firestoreInstance.collection("TransactionDetail").
+                                doc("Transactions").collection(uid).
+                                doc(uid+this.aEventModel.projectName).set(this.aTransactionModel.toJson()).then((val) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => new SuccessTick(uid),
+                                    ),
+                                  );
+                                });
+                                
+                                              
+                              });
                             })),
                   ],
                 ),
@@ -246,13 +277,53 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
       ),
     );
   }
-
-  Future<String> customAlertbox(BuildContext context){
+void setTransactionDetail(String creatorUserId,String donorUserId,String projectName,int donateAmount ) {
+    this.aTransactionModel.creatorUserId = creatorUserId;
+    this.aTransactionModel.donorUserId = donorUserId;
+    this.aTransactionModel.projectName = projectName;
+    this.aTransactionModel.donateAmount = donateAmount;
+  }
+Future<String> customsAlertbox(BuildContext context){
+    TextEditingController mycontroller=new TextEditingController();
     return showDialog(
       context:context,
       builder:(context){
-        return AlertDialog();
-      }
+        return AlertDialog(
+          title: Text("Enter The Amount You Want to Donate",
+          style:TextStyle(fontSize: 16,
+          fontWeight: FontWeight.w700)),
+          backgroundColor: Theme.of(context).focusColor,
+          shape: RoundedRectangleBorder(
+            borderRadius:BorderRadius.circular(30),
+          ),
+          content: TextField(
+            controller:mycontroller,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              hintText: "Enter Amount",
+              hintStyle:TextStyle(fontSize: 16.0,
+              fontFamily: "Roboto",)
+            ),
+          ),
+          actions: [
+            RaisedButton(
+              child:Text("Submit",style: TextStyle(fontSize: 16.0,
+              fontFamily: "Roboto",
+              ),),
+              onPressed: (){
+                Navigator.of(context).pop(mycontroller.text);
+            }),
+            RaisedButton(
+               child:Text("Cancel",style: TextStyle(fontSize: 12.0,
+              fontFamily: "Roboto",),),
+              onPressed: (){
+                Navigator.of(context).pop("");
+            }
+            )
+          ],
+        );
+      },
+      barrierDismissible:false,
     );
   }
   List<Image> imagePath(List<String> aIMage)  {
@@ -275,7 +346,6 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
         .where("projectName", isEqualTo: currentProjectName)
         .get()
         .then((value) async {
-      print(value.docs.first.id);
       await aFileStorage
           .downloadFile(firebase_storage.FirebaseStorage.instance
               .ref()
@@ -283,9 +353,6 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
               .child("Documents")
               .child("event" + (value.docs.first.id).toString()))
           .then((value1) {
-        print("value1 in download");
-        print(value1.first);
-
         aEventModel = EventModel.fromJson(value.docs.first.data());
         aEventModel.multiplePictureLocation = value1;
       });

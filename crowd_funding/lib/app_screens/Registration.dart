@@ -227,11 +227,11 @@ class _RegistrartionForm extends State<Registration> {
                                      this.setUserDetail();
                                     this.firebaseUsers.doc(userId)
                                     .set(this.aUser.toJson())
-                                    .then((value) {
+                                    .then((value1) {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => new SuccessTick(),
+                                      builder: (context) => new SuccessTick(value.uid),
                                     ),
                                   );
                                 });

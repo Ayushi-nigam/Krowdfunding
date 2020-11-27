@@ -176,7 +176,7 @@ class _LoginForm extends State<Login> {
                                     .then((value1) {Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          Dashboard(uid: "o5FSNmgM2meQowClwg1AqTK2mF32")));
+                                          Dashboard(uid: value.uid)));
                             });}});
                             }
                           ,

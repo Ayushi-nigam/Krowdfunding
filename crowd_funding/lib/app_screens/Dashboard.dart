@@ -156,22 +156,23 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
 
   Future<List<EventModel>> retrieveEvent() {
     var completer = new Completer<List<EventModel>>();
-
-    firebaseEvents
-        .where('userId', isEqualTo: uid)
-        .get()
-        .then((value) async {
-      List<EventModel> aEventModelList = new List<EventModel>();
+    FirebaseFirestore.instance.collection("EventDocument").doc("events").collection(uid).get().then((value) async {
+      List<EventModel> aEventModelList = new List<EventModel>();print("eventmodel");
+      print(value.docs);
+      int count=0;
       for (var item in value.docs) {
+        count++;
         await aFileStorage
             .downloadFile(firebase_storage.FirebaseStorage.instance
                 .ref()
-                .child('akash')
-                .child("image"))
-            .then((value) {
+                .child(uid)
+                .child("Documents").child("event"+count.toString()))
+            .then((value1) {
+              print("value1 in download");
+              print(value1.first);
           EventModel aEventModel = new EventModel();
           aEventModel = EventModel.fromJson(item.data());
-          aEventModel.pictureLocation = value.first;
+          aEventModel.pictureLocation = value1.first;
           aEventModelList.add(aEventModel);
         });
       }
@@ -179,6 +180,30 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicatorDemo> {
     });
     return completer.future;
   }
+  // Future<List<EventModel>> retrieveEvent() {
+  //   var completer = new Completer<List<EventModel>>();
+  //   firebaseEvents
+  //       .where('userId', isEqualTo: uid)
+  //       .get()
+  //       .then((value) async {
+  //     List<EventModel> aEventModelList = new List<EventModel>();
+  //     for (var item in value.docs) {
+  //       await aFileStorage
+  //           .downloadFile(firebase_storage.FirebaseStorage.instance
+  //               .ref()
+  //               .child('akash')
+  //               .child("image"))
+  //           .then((value) {
+  //         EventModel aEventModel = new EventModel();
+  //         aEventModel = EventModel.fromJson(item.data());
+  //         aEventModel.pictureLocation = value.first;
+  //         aEventModelList.add(aEventModel);
+  //       });
+  //     }
+  //     completer.complete(aEventModelList);
+  //   });
+  //   return completer.future;
+  // }
   // Future<List<EventModel>> retrieveEvent() {
   //   var completer = new Completer<List<EventModel>>();
   //   List<EventModel> aEventModelList = new List<EventModel>();

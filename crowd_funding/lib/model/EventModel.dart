@@ -5,6 +5,7 @@ class EventModel {
   String campaginDiscription;
   int campaginDays;
   int goalAmount;
+  int collectedAmount;
   String category;
   String createdDate;
   String pictureLocation;
@@ -18,6 +19,7 @@ class EventModel {
     campaginDiscription = "";
     campaginDays = 0;
     goalAmount = 0;
+    collectedAmount=0;
     category = '';
     createdDate = '';
     pictureLocation = "";
@@ -31,6 +33,7 @@ class EventModel {
         campaginDiscription = json['campaginDiscription'],
         campaginDays = json['campaginDays'],
         goalAmount = json['goalAmount'],
+        collectedAmount = json['collectedAmount'],
         category = json['category'],
         createdDate = json['createdDate'],
         userId = json['userId'];
@@ -42,6 +45,7 @@ class EventModel {
         'city':this.city,
         'createdDate': this.createdDate,
         'goalAmount': this.goalAmount,
+        'collectedAmount': this.collectedAmount,
         'category': this.category,
         'campaginDays': this.campaginDays,
         'userId': this.userId,

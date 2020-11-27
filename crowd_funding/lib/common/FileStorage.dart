@@ -45,7 +45,6 @@ class FileStorage {
       await ref
           .list(firebase_storage.ListOptions(maxResults: 8))
           .then((value) async {
-            print("Inside filestorage");
            // print (value.items.elementAt(index));
         for (int i =0;i<value.items.length;i++) {
             var item=await value.items.elementAt(i).getDownloadURL();
