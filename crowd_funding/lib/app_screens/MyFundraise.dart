@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crowd_funding/app_screens/Dashboard.dart';
 import 'package:crowd_funding/app_screens/FundraiseList.dart';
 import 'package:crowd_funding/app_screens/TextFField.dart';
 import 'package:crowd_funding/common/FileStorage.dart';
@@ -36,7 +37,7 @@ class MyFundraiseState extends State<MyFundraise> {
   //String selectedValueCity;
   //String selectedValueResidence;
   CollectionReference firebaseUsers =
-      FirebaseFirestore.instance.collection('EventDocument');
+      FirebaseFirestore.instance.collection('Events');
   // DocumentReference docFirebaseUer = FirebaseFirestore.instance.doc("event");
   Set<String> path = new Set<String>();
   FileStorage aFileStorage = new FileStorage();
@@ -72,7 +73,7 @@ class MyFundraiseState extends State<MyFundraise> {
 
   @override
   void initState() {
-    FirebaseFirestore.instance.collection("EventDocument").doc("events").collection(uid).get().then((value) {
+    FirebaseFirestore.instance.collection("Events").where('userId',isEqualTo:uid).get().then((value) {
       List <DocumentSnapshot> mydoc =value.docs;
       print("values in eventdocument");
       print(mydoc.length);
@@ -96,14 +97,14 @@ class MyFundraiseState extends State<MyFundraise> {
        }
         
       this.setEventDetails();
-      firebaseUsers.doc("events").collection(uid).doc((eventCount+1).toString()).set(this.event.toJson()).then((value) {
+      firebaseUsers.doc().set(this.event.toJson()).then((value) {
         currentStep + 1 != steps.length
             ? goTo(currentStep + 1)
             : setState(() => complete = true);
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => FundraiseList("My Fundraise", uid),
+            builder: (context) => Dashboard(uid: uid),
           ),
         );
       });
@@ -457,6 +458,8 @@ class MyFundraiseState extends State<MyFundraise> {
     this.event.createdDate = new DateTime.now().toString();
     this.event.goalAmount = int.parse(this.goalAmountController.text);
     this.event.userId = this.uid;
+    this.event.collectedAmount=0;
+    this.event.eventNo=eventCount+1;
   }
 }
 

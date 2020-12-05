@@ -44,8 +44,7 @@ Future<auths.User> googleSignIn() async {
     auths.UserCredential result = await auth.signInWithCredential(credential);
 
     auths.User user = await auth.currentUser;
-    print("Inside google sign in");
-    print(user.uid);
+    
 
     return Future.value(user);
   }
@@ -102,8 +101,8 @@ Future<auths.User> signUp(
 
 Future<bool> signOutUser() async {
   auths.User user = await auth.currentUser;
-  print(user.providerData[1].providerId);
-  if (user.providerData[1].providerId == 'google.com') {
+  print(user.providerData[0].providerId);
+  if (user.providerData[0].providerId == 'google.com') {
     await gooleSignIn.disconnect();
   }
   await auth.signOut();

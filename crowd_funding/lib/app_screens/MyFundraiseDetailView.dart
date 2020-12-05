@@ -13,16 +13,17 @@ import 'package:flutter/material.dart';
 class MyFundraiseDetailView extends StatefulWidget {
   final String uid;
    String currentProjectName='';
-
-  MyFundraiseDetailView({Key key, @required this.uid,this.currentProjectName}) : super(key: key);
+  String currentProjectUid='';
+  MyFundraiseDetailView({Key key, @required this.uid,this.currentProjectName,this.currentProjectUid}) : super(key: key);
 
   @override
-  _myFundraiseDetailViewState createState() => _myFundraiseDetailViewState(uid,currentProjectName);
+  _myFundraiseDetailViewState createState() => _myFundraiseDetailViewState(uid,currentProjectName,currentProjectUid);
 }
 
 class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
   final String uid;
   String currentProjectName='';
+  String currentProjectUid='';
   final firestoreInstance = FirebaseFirestore.instance;
   final CollectionReference firebaseEvents =
       FirebaseFirestore.instance.collection('Event');
@@ -30,7 +31,19 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
   EventModel aEventModel;
   TransactionModel aTransactionModel=new TransactionModel();
   int _current = 0;
-  _myFundraiseDetailViewState(this.uid,this.currentProjectName);
+  int noOfDonor=0;
+  _myFundraiseDetailViewState(this.uid,this.currentProjectName,this.currentProjectUid);
+
+  @override
+  void initState(){
+     FirebaseFirestore.instance.collection("Transactions").where('projectName',isEqualTo:currentProjectName).get().then((value) async {
+     for(var item in value.docs){
+        //TransactionModel aTransactionModels=TransactionModel.fromJson(item.data());
+        noOfDonor++;
+     }
+     }
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -53,7 +66,7 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
             },
           )),
       body: FutureBuilder(
-        future: retrieveEvent(currentProjectName),
+        future: retrieveEvent(currentProjectUid,currentProjectName),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             this.aEventModel = snapshot.data;
@@ -123,10 +136,13 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
                       SizedBox(
                         width: MediaQuery.of(context).size.width / 14,
                       ),
-                      Text(this.aEventModel.campaginDiscription,
+                      Expanded(child:Text(this.aEventModel.campaginDiscription,
+                      //overflow: TextOverflow.ellipsis,
+                      //maxLines: 4,
                           textAlign: TextAlign.left,
                           style: TextStyle(
-                              fontWeight: FontWeight.w400, fontSize: 18)),
+                              fontWeight: FontWeight.w400, fontSize: 18))),
+                             // SizedBox(width:MediaQuery.of(context).size.width / 10 ,)
                     ]),
                     SizedBox(
                       height: MediaQuery.of(context).size.height / 150,
@@ -166,7 +182,7 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width / 6,
                         ),
-                        Text("20 ",
+                        Text(noOfDonor.toString(),
                             textAlign: TextAlign.left,
                             style: TextStyle(
                                 fontWeight: FontWeight.w700, fontSize: 16)),
@@ -196,7 +212,7 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
                             style: TextStyle(
                                 fontWeight: FontWeight.w700, fontSize: 16)),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width / 8,
+                          width: MediaQuery.of(context).size.width / 9,
                         ),
                         Text("Donors",
                             textAlign: TextAlign.left,
@@ -216,7 +232,7 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width / 14,
                         ),
-                        Text("80,000",
+                        Text(this.aEventModel.collectedAmount.toString(),
                             textAlign: TextAlign.left,
                             style: TextStyle(
                                 fontWeight: FontWeight.w700, fontSize: 16)),
@@ -242,20 +258,18 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
                               //calling Alert box to retreive donate amount
                               customsAlertbox(context).then((value){
                                 //Getting document name of donated eventfrom firebase
-                                this.firestoreInstance.collection("EventDocument")
-                                .doc("events").collection(uid).where('projectName',isEqualTo:this.aEventModel.projectName)
+                                this.firestoreInstance.collection("Events").where('userId',isEqualTo:aEventModel.userId).where('projectName',isEqualTo:this.aEventModel.projectName)
                                 .get().then((docName){
                                   //update the donated amount in event document of firebase
-                                  this.firestoreInstance.collection("EventDocument")
-                                .doc("events").collection(uid).doc(docName.docs.first.id).
+                                  this.firestoreInstance.collection("Events")
+                                .doc(docName.docs.first.id).
                                 update({"collectedAmount":int.parse(value)+this.aEventModel.collectedAmount}).whenComplete(() {
                                  });} );
                                 //calling setTransaction method to set data in TransactionModel
-                                setTransactionDetail(this.aEventModel.userId,uid, this.aEventModel.projectName, int.parse(value));
+                                setTransactionDetail(this.aEventModel.userId,uid, this.aEventModel.projectName, int.parse(value),this.aEventModel.eventNo);
                                 // set Trasaction details in firebase
-                                this.firestoreInstance.collection("TransactionDetail").
-                                doc("Transactions").collection(uid).
-                                doc(uid+this.aEventModel.projectName).set(this.aTransactionModel.toJson()).then((val) {
+                                this.firestoreInstance.collection("Transactions").
+                                doc().set(this.aTransactionModel.toJson()).then((val) {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -277,11 +291,12 @@ class _myFundraiseDetailViewState extends State<MyFundraiseDetailView> {
       ),
     );
   }
-void setTransactionDetail(String creatorUserId,String donorUserId,String projectName,int donateAmount ) {
+void setTransactionDetail(String creatorUserId,String donorUserId,String projectName,int donateAmount,int eventNo ) {
     this.aTransactionModel.creatorUserId = creatorUserId;
     this.aTransactionModel.donorUserId = donorUserId;
     this.aTransactionModel.projectName = projectName;
     this.aTransactionModel.donateAmount = donateAmount;
+    this.aTransactionModel.eventNo = eventNo;
   }
 Future<String> customsAlertbox(BuildContext context){
     TextEditingController mycontroller=new TextEditingController();
@@ -307,7 +322,7 @@ Future<String> customsAlertbox(BuildContext context){
           ),
           actions: [
             RaisedButton(
-              child:Text("Submit",style: TextStyle(fontSize: 16.0,
+              child:Text("Submit",style: TextStyle(fontSize: 12.0,
               fontFamily: "Roboto",
               ),),
               onPressed: (){
@@ -336,22 +351,21 @@ Future<String> customsAlertbox(BuildContext context){
     return img;
   }
 
-  Future<EventModel> retrieveEvent(String currentProjectName) {
+  Future<EventModel> retrieveEvent(String currentProjectuid,String currentProjectName) {
     var completer = new Completer<EventModel>();
     EventModel aEventModel = new EventModel();
     FirebaseFirestore.instance
-        .collection("EventDocument")
-        .doc("events")
-        .collection(uid)
-        .where("projectName", isEqualTo: currentProjectName)
+        .collection("Events")
+        .where("userId", isEqualTo: currentProjectuid ).
+        where('projectName',isEqualTo: currentProjectName)
         .get()
         .then((value) async {
       await aFileStorage
           .downloadFile(firebase_storage.FirebaseStorage.instance
               .ref()
-              .child(uid)
+              .child(currentProjectuid)
               .child("Documents")
-              .child("event" + (value.docs.first.id).toString()))
+              .child("event" + (value.docs.first.data().values.last).toString()))
           .then((value1) {
         aEventModel = EventModel.fromJson(value.docs.first.data());
         aEventModel.multiplePictureLocation = value1;
